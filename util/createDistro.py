@@ -50,6 +50,8 @@ if __name__ == '__main__':
     # streamlabs scripts dir
     scripts_path = path.join(
         r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\JBetSystem')
+    if not path.exists(scripts_path):
+        mkdir(scripts_path)
     remove_files(scripts_path)
 
     print('Creating distribution at "%s"' % dist_path)
@@ -58,16 +60,16 @@ if __name__ == '__main__':
         remove(dist_path)
 
     # create folders if necessary
-    if not path.exists(scripts_path):
-        mkdir(scripts_path)
     if not path.exists(path.join(scripts_path, 'lib')):
         mkdir(path.join(scripts_path, 'lib'))
     if not path.exists(path.join(scripts_path, 'Overlays')):
         mkdir(path.join(scripts_path, 'Overlays'))
+    if not path.exists(path.join(scripts_path, 'resources')):
+        mkdir(path.join(scripts_path, 'resources'))
 
     with ZipFile(path.join(dist_path), mode='w') as zf:
         for dr in listdir(base_path):
-            if dr not in ['.idea', 'util', 'dist']:
+            if dr not in ['.idea', 'util', 'dist', 'LICENSE', '.gitignore', '.git']:
                 if path.isdir(path.join(base_path, dr)):
                     fl = file_paths(path.join(base_path, dr))
                     for f in fl:

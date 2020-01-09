@@ -1,34 +1,28 @@
 {
     "output_file": "resources/settings.json",
-    "prefix": {
+    "core.log_level": {
+        "type": "dropdown",
+        "value": "Info",
+        "items": [
+            "Trace",
+            "Debug",
+            "Info",
+            "Warn",
+            "Error",
+            "None"
+        ],
+        "label": "Log level",
+        "tooltip": "Which logs should be shown in the logs tab?",
+        "group": "Core"
+    },
+    "core.prefix": {
         "type": "textbox",
         "value": "!lucky",
         "label": "Prefix",
         "tooltip": "The bot prefix",
         "group": "Core"
     },
-    "raw_help_command": {
-        "type": "textbox",
-        "value": "{prefix}?",
-        "label": "Help command",
-        "tooltip": "{prefix} is the bot prefix",
-        "group": "Core"
-    },
-    "raw_malformed_request_response": {
-        "type": "textbox",
-        "value": "I did not get that. Type '{0}' for help and try again.",
-        "label": "Malformed request response",
-        "tooltip": "Message displayed if a command does not make sens. {0} is the help keyword",
-        "group": "Core"
-    },
-    "raw_help_message": {
-        "type": "textbox",
-        "value": "Type: '{gamble}' to gamble, '{guess}' to guess, '{0} command' to view more information about a command.",
-        "label": "Help message",
-        "tooltip": "{...} is the command description for this command, {0} the help keyword",
-        "group": "Core"
-    },
-    "permission": {
+    "core.permission.value": {
         "type": "dropdown",
         "value": "everyone",
         "items": [
@@ -42,126 +36,141 @@
         "tooltip": "Who is able to use the bot in general",
         "group": "Core"
     },
-    "permission_info": {
+    "core.permission.info": {
         "type": "textbox",
         "value": "",
-        "label": "Info",
+        "label": "Permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
         "group": "Core"
     },
-    "time_format_hours": {
+    "core.all_keyword": {
         "type": "textbox",
-        "value": "%d hours",
-        "label": "Hours format",
-        "tooltip": "How to display the hour part of a time.\n\r%d are the hours\n\rRead up on python string formatting if you want to us a custom format",
+        "value": "all",
+        "label": "All keyword",
+        "tooltip": "Keyword to indicate the user wants to gamble all of his currency",
         "group": "Core"
     },
-    "time_format_hour": {
-        "type": "textbox",
-        "value": "one hour",
-        "label": "Hour format",
-        "tooltip": "How to display the hour part of a time when its only an hour",
-        "group": "Core"
-    },
-    "time_format_minutes": {
-        "type": "textbox",
-        "value": "%d minutes",
-        "label": "Minutes format",
-        "tooltip": "How to display the minutes part of a time.\n\r%d are the minutes\n\nRead up on python string formatting if you want to us a custom format",
-        "group": "Core"
-    },
-    "time_format_minute": {
-        "type": "textbox",
-        "value": "one minute",
-        "label": "Minute format",
-        "tooltip": "How to display the minutes part of a time when its only a minute",
-        "group": "Core"
-    },
-    "time_format_seconds": {
-        "type": "textbox",
-        "value": "%d seconds",
-        "label": "Seconds format",
-        "tooltip": "How to display the seconds part of a time.\n\r%d are the seconds\n\nRead up on python string formatting if you want to us a custom format",
-        "group": "Core"
-    },
-    "time_format_second": {
-        "type": "textbox",
-        "value": "one second",
-        "label": "Second format",
-        "tooltip": "How to display the seconds part of a time when its only a second",
-        "group": "Core"
-        },
-    "time_format_separator": {
-        "type": "textbox",
-        "value": "and",
-        "label": "Time format separator",
-        "tooltip": "Separator before the last time element eg.: One hour and 30 minutes",
-        "group": "Core"
-    },
-    "raw_not_permitted_message": {
-        "type": "textbox",
-        "value": "You are not permitted to use this command {user}.",
-        "label": "Permission error",
-        "tooltip": "Text do be displayed when somebody tries to use a command but has no permission to do so.\n\r{user} mentions the user",
-        "group": "Core"
-    },
-    "require_ok": {
+    "core.disclaimer.enable": {
         "type": "checkbox",
-        "label": "Enable disclaimer",
+        "label": "Disclaimer enable",
         "value": true,
-        "tooltip": "Whether or not to require the gambling disclaimer",
+        "tooltip": "Whether or not to require acknowledgment of the gambling disclaimer before gambling",
         "group": "Core"
     },
-    "disclaimer_keyword": {
+    "core.disclaimer.via_whisper": {
+        "type": "checkbox",
+        "label": "Disclaimer via whisper",
+        "value": true,
+        "tooltip": "Whether or not to conclude disclaimer acknowledgement via whisper message",
+        "group": "Core"
+    },
+    "core.disclaimer.keyword": {
         "type": "textbox",
         "value": "disclaimer",
-        "label": "Gambling disclaimer keyword",
-        "tooltip": "Keyword to display the gambling disclaimer",
+        "label": "Disclaimer keyword",
+        "tooltip": "Keyword to display the disclaimer",
         "group": "Core"
     },
-    "disclaimer_acknowledge_keyword": {
+    "core.acknowledge.keyword": {
         "type": "textbox",
         "value": "acknowledge",
-        "label": "Gambling disclaimer acknowledgement keyword",
-        "tooltip": "Keyword to acknowledge the gambling disclaimer",
+        "label": "Disclaimer acknowledge keyword",
+        "tooltip": "Keyword to acknowledge the disclaimer",
         "group": "Core"
     },
-    "raw_disclaimer": {
+    "core.text.help": {
         "type": "textbox",
-        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type '{acknowledge}' to acknowledge this disclaimer.",
-        "label": "Gambling disclaimer",
-        "tooltip": "Text to be displayed to users who did not acknowledge the gambling advice\n\r{acknowledge} is the keyword to acknowledge the disclaimer",
+        "value": "Available commands: {gamble.command}, {guess.command}, {d20.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {core.disclaimer.command}.",
+        "label": "Help text",
+        "tooltip": "Help text shown when using the help command.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{guess.command} (guess command),\n\r\t{d20.command} (d20 command),\n\r\t{core.help.command} (help command),\n\r\t{core.disclaimer.command} (disclaimer command)",
         "group": "Core"
     },
-    "raw_not_ok_message": {
+    "core.text.no_permission": {
         "type": "textbox",
-        "value": "You need to acknowledge the gambling disclaimer before gambling, {user}. Type '{disclaimer}' to display it.",
-        "label": "Gambling disclaimer required message",
-        "tooltip": "Text to be displayed to users who attempt to gamble but did not acknowledge the gambling advice\n\r{disclaimer} is the keyword for the disclaimer",
+        "value": "You have no permission to use the commands, {user}.",
+        "label": "No permission text",
+        "tooltip": "Text shown when user attempts to use the bot without permission to do so.\n\rAvailable formats are:\n\r\t{user} (mentions the user)",
         "group": "Core"
     },
-    "raw_disclaimer_acknowledged_message": {
+    "core.text.no_command_permission": {
         "type": "textbox",
-        "value": "You can gamble now {user}!",
-        "label": "Gambling disclaimer acknowledged message",
-        "tooltip": "Text to be displayed when a user acknowledges the gambling disclaimer",
+        "value": "You have no permission to use the {keyword} command, {user}.",
+        "label": "No command permission text",
+        "tooltip": "Text shown when user attempts to use a command without permission to do so.\n\rAvailable formats are:\n\r\t{keyword} (the keyword the user tried to use),\n\r\t{user} (mentions the user)",
         "group": "Core"
     },
-    "raw_out_of_currency_message": {
+    "core.text.command_disable": {
         "type": "textbox",
-        "value": "You don't have enough {currency} to do this!",
-        "label": "Out of currency message",
-        "tooltip": "Text to be displayed when a user tries to use more currency than he has\n\r{currency} is the currency name",
+        "value": "{keyword} is currently disabled, {user}.",
+        "label": "Command disable text",
+        "tooltip": "Text shown when user attempts to use disabled command.\n\rAvailable formats are:\n\r\t{keyword} (the keyword the user tried to use),\n\r\t{user} (mentions the user)",
         "group": "Core"
     },
-    "gamble_keyword": {
+    "core.text.malformed_command": {
         "type": "textbox",
-        "value": "gamble",
-        "label": "Keyword",
-        "tooltip": "Keyword used to gamble",
-        "group": "gamble"
+        "value": "I did not get that, {user}. Type {core.help.command} for help and try again.",
+        "label": "Malformed command text",
+        "tooltip": "Text shown when user tries to use the bot but the command is not recognized.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{core.help.command} (help command)",
+        "group": "Core"
     },
-    "gamble_permission": {
+    "core.text.not_enough_currency": {
+        "type": "textbox",
+        "value": "You don't have enough {currency} to do this, {user}.",
+        "label": "Not enough currency text",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{currency} (currency name),\n\r\t{user} (mentions the user)",
+        "group": "Core"
+    },
+    "core.text.not_acknowledged": {
+        "type": "textbox",
+        "value": "I'm sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.",
+        "label": "Disclaimer not acknowledged text",
+        "tooltip": "Text shown when a user tries to gamble before acknowledging the disclaimer.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{gamble.keyword} (gamble keyword),\n\n\t{guess.keyword} (guess keyword),\n\n\t{core.disclaimer.command} (disclaimer command)",
+        "group": "Core"
+    },
+    "core.text.disclaimer_via_whisper": {
+        "type": "textbox",
+        "value": "You need to send this message via whisper, {user}",
+        "label": "Disclaimer via whisper message",
+        "tooltip": "Text shown when disclaimer via whisper is enable but user tries to use those commands in stream chat.\n\rAvailable formats:\n\r\t{user} (mentions the user)",
+        "group": "Core"
+    },
+    "core.text.disclaimer": {
+        "type": "textbox",
+        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.",
+        "label": "Disclaimer",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{core.acknowledge.command} (command to acknowledge the disclaimer)",
+        "group": "Core"
+    },
+    "core.text.disclaimer_disable": {
+        "type": "textbox",
+        "value": "The disclaimer is currently disabled, {user}.",
+        "label": "Disclaimer disable text",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{user} (mentions the user)",
+        "group": "Core"
+    },
+    "core.text.acknowledged": {
+        "type": "textbox",
+        "value": "You can {gamble.keyword} and {guess.keyword} now {user}.",
+        "label": "Acknowledged text",
+        "tooltip": "Text shown when a user acknowledges the disclaimer.\n\rAvailable formats are:\n\r\t{gamble.keyword} (gamble keyword),\n\r\t{guess.keyword} (guess keyword),\n\r\t{user} (mentions the user)",
+        "group": "Core"
+    },
+    "core.text.twitch_bug": {
+        "type": "textbox",
+        "value": "Please close the whisper chat with the 'X' and reopen it after replying to see new messages from me (that's a nice twitch but isn't it?).",
+        "label": "Twitch whisper bug text",
+        "tooltip": "Text appended to all whisper messages as this is a twitch bug and quite annoying",
+        "group": "Core"
+    },
+
+    "gamble.enable": {
+        "type": "checkbox",
+        "label": "Gamble enable",
+        "value": true,
+        "tooltip": "Whether or not the gamble command is enabled",
+        "group": "Gamble"
+    },
+    "gamble.permission.value": {
         "type": "dropdown",
         "value": "everyone",
         "items": [
@@ -171,103 +180,67 @@
             "user_specific",
             "editor"
         ],
-        "label": "Permission",
+        "label": "Gamble permission",
         "tooltip": "Who is able to use the gamble command",
-        "group": "gamble"
+        "group": "Gamble"
     },
-    "gamble_info": {
+    "gamble.permission.info": {
         "type": "textbox",
         "value": "",
-        "label": "Info",
+        "label": "Gamble permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
-        "group": "gamble"
+        "group": "Core"
     },
-    "gamble_chance": {
+    "gamble.text.win": {
+        "type": "textbox",
+        "value": "Roll was {roll}. {user} wins {payout} {currency} and has {total} {currency} now.",
+        "label": "Gamble win text",
+        "tooltip": "Text shown when a user wins a gamble.\n\rAvailable formats are:\n\r\t{roll} (the gamble roll),\n\r\t{user} (mentions the user),\n\r\t{payout} (the winnings)\n\r\t{currency} (currency name)\n\r\t{total} (users total currency)",
+        "group": "Gamble"
+    },
+    "gamble.text.lose": {
+        "type": "textbox",
+        "value": "Roll was {roll}. {user} loses {loss} {currency} and has {total} {currency} now.",
+        "label": "Gamble lose text",
+        "tooltip": "Text shown when a user loses a gamble.\n\rAvailable formats are:\n\r\t{roll} (the gamble roll),\n\r\t{user} (mentions the user),\n\r\t{loss} (the loss)\n\r\t{currency} (currency name)\n\r\t{total} (users total currency)",
+        "group": "Gamble"
+    },
+    "gamble.text.help": {
+        "type": "textbox",
+        "value": "Type {gamble.command} [amount] to gamble. Chances to win are {gamble.chance}%",
+        "label": "Gamble help text",
+        "tooltip": "Gamble help text.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{gamble.chance} (chance to win when gambling)",
+        "group": "Gamble"
+    },
+    "gamble.chance": {
         "type": "slider",
-        "value": 1,
+        "value": 25,
         "min": 0,
         "max": 100,
         "ticks": 1,
         "label": "Gamble winning chance",
         "tooltip": "Chance to win when gambling in percent",
-        "group": "gamble"
+        "group": "Gamble"
     },
-    "gamble_win_multiplier": {
+    "gamble.win_multiplier": {
         "type": "slider",
         "value": 2,
         "min": 0,
         "max": 10,
         "ticks": 0.5,
         "label": "Gamble win multiplier",
-        "tooltip": "Winnings = bet * multiplier",
-        "group": "gamble"
+        "tooltip": "Payout = amount * multiplier",
+        "group": "Gamble"
     },
-    "raw_gamble_win_message": {
-        "type": "textbox",
-        "value": "{user} won {winnings} {currency} and has {total} {currency}!",
-        "label": "Gamble win message",
-        "tooltip": "Message displayed if a users wins\n\r{user} mentions the user, {winnings} is the amount won, {total} the users total coins",
-        "group": "gamble"
+    
+    "guess.enable": {
+        "type": "checkbox",
+        "label": "Guess enable",
+        "value": true,
+        "tooltip": "Whether or not the guess command is enabled",
+        "group": "Guess"
     },
-    "raw_gamble_loss_message": {
-        "type": "textbox",
-        "value": "{user} lost {loss} {currency} and has {total} {currency}!",
-        "label": "Gamble loss message",
-        "tooltip": "Message displayed if a users looses\n\r{user} mentions the user, {winnings} is the amount won, {total} the users total coins",
-        "group": "gamble"
-    },
-    "gamble_help": {
-        "type": "textbox",
-        "value": "Use '{command} [amount]' to gamble. Chances of winning are {chance}",
-        "label": "Info",
-        "tooltip": "{command} is the gamble command, {chance} the chance of winning in percent",
-        "group": "gamble"
-    },
-    "gamble_cooldown": {
-        "type": "slider",
-        "value": 250,
-        "min": 0,
-        "max": 600,
-        "ticks": 10,
-        "label": "Cooldown (seconds)",
-        "tooltip": "How long gamble should go on cooldown after usage",
-        "group": "gamble"
-    },
-    "raw_gamble_cooldown_message": {
-        "type": "textbox",
-        "value": "You can not gamble again already {user}. You need to wait {cooldown}",
-        "label": "Gamble cooldown message",
-        "tooltip": "{user} mentions the user, {cooldown} is remaining cooldown as specified by the time format",
-        "group": "gamble"
-    },
-    "guess_keyword": {
-        "type": "textbox",
-        "value": "guess",
-        "label": "Keyword",
-        "tooltip": "Keyword used to guess",
-        "group": "guess"
-    },
-    "guess_max_val": {
-        "type": "slider",
-        "value": 100,
-        "min": 0,
-        "max": 1000,
-        "ticks": 10,
-        "label": "Max value",
-        "tooltip": "The maximum value the random number to be guessed can be [0 - max value]",
-        "group": "guess"
-    },
-    "guess_win_multiplier": {
-        "type": "slider",
-        "value": 5,
-        "min": 0,
-        "max": 10,
-        "ticks": 0.5,
-        "label": "Guess win multiplier",
-        "tooltip": "Winnings = bet * multiplier",
-        "group": "guess"
-    },
-    "guess_permission": {
+    "guess.permission.value": {
         "type": "dropdown",
         "value": "everyone",
         "items": [
@@ -277,60 +250,56 @@
             "user_specific",
             "editor"
         ],
-        "label": "Permission",
-        "tooltip": "Who is able to use the gamble command",
-        "group": "guess"
+        "label": "Guess permission",
+        "tooltip": "Who is able to use the guess command",
+        "group": "Guess"
     },
-    "guess_info": {
+    "guess.permission.info": {
         "type": "textbox",
         "value": "",
-        "label": "Info",
+        "label": "Guess permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
-        "group": "guess"
+        "group": "Core"
     },
-    "raw_guess_win_message": {
+    "guess.text.win": {
         "type": "textbox",
-        "value": "{user} won {winnings} {currency} and has {total} {currency}!",
-        "label": "Guess win message",
-        "tooltip": "Message displayed if a users wins\n\r{user} mentions the user, {winnings} is the amount won, {total} the users total coins",
-        "group": "guess"
+        "value": "{user}'s guess ({guess}) was right! He wins {payout} and has {total} {currency} now.",
+        "label": "Guess win text",
+        "tooltip": "Text shown when a user guesses right.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{guess} (the guessed number),\n\r\t{payout} (the winnings)\n\r\t{total} (users total currency)\n\r\t{currency} (currency name)",
+        "group": "Guess"
     },
-    "raw_loss_win_message": {
+    "guess.text.lose": {
         "type": "textbox",
-        "value": "{user} lost {winnings} {currency} and has {total} {currency}!",
-        "label": "Guess loss message",
-        "tooltip": "Message displayed if a users loses\n\r{user} mentions the user, {winnings} is the amount won, {total} the users total coins",
-        "group": "guess"
+        "value": "{user}\\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.",
+        "label": "Guess lose text",
+        "tooltip": "Text shown when a user guesses wrong.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{guess} (the guessed number),\n\r\t{roll} (the rolled number)\n\r\t{loss} (the loss)\n\r\t{total} (users total currency)\n\r\t{currency} (currency name)",
+        "group": "Guess"
     },
-    "guess_help": {
+    "guess.text.help": {
         "type": "textbox",
-        "value": "Use '{command} [amount] [guess]' to guess. Guess has to be between 0 and {max}",
-        "label": "Info",
-        "tooltip": "{command} is the guess command, {max} the maximum value for a guess",
-        "group": "guess"
+        "value": "Type {guess.command} [guess] [amount] to guess. [guess] must be between 0 and {guess.max_val}",
+        "label": "Guess help text",
+        "tooltip": "Guess help text.\n\rAvailable formats are:\n\r\t{guess.command} (guess command),\n\r\t{guess.max_val} (the maximum possible number)",
+        "group": "Guess"
     },
-    "guess_cooldown": {
+    "guess.max_val": {
         "type": "slider",
-        "value": 250,
+        "value": 20,
         "min": 0,
-        "max": 600,
-        "ticks": 10,
-        "label": "Cooldown (seconds)",
-        "tooltip": "How long gamble should go on cooldown after usage",
-        "group": "guess"
+        "max": 100,
+        "ticks": 1,
+        "label": "Guess max value",
+        "tooltip": "Maximum value that can be rolled when guessing",
+        "group": "Guess"
     },
-    "raw_guess_cooldown_message": {
-        "type": "textbox",
-        "value": "You can not guess again already {user}. You need to wait {cooldown}",
-        "label": "Guess cooldown message",
-        "tooltip": "{user} mentions the user, {cooldown} is remaining cooldown as HH MM and SS",
-        "group": "guess"
-    },
-    "BtnDefaults": {
-        "type": "button",
-        "label": "Restore Default Settings",
-        "tooltip": "Reset settings back to defaults.\r\nReload Scripts afterwards to see the changes in the user interface!",
-        "function": "RestoreDefaultSettings",
-        "group": ""
+    "guess.win_multiplier": {
+        "type": "slider",
+        "value": 5,
+        "min": 0,
+        "max": 10,
+        "ticks": 0.5,
+        "label": "Guess win multiplier",
+        "tooltip": "Payout = amount * multiplier",
+        "group": "Guess"
     }
 }

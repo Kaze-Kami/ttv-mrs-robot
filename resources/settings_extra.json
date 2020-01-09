@@ -1,0 +1,8 @@
+{
+    "core.help.command": "{core.prefix}?",
+    "core.acknowledge.command": "{core.prefix} {core.acknowledge.keyword}",
+    "core.disclaimer.command": "{core.prefix} {core.disclaimer.keyword}",
+    "gamble.command": "{core.prefix} {gamble.keyword}",
+    "guess.command": "{core.prefix} {guess.keyword}",
+    "d20.command": "{core.prefix} {d20.keyword}"
+}
