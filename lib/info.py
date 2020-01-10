@@ -5,7 +5,7 @@ Created by Joscha Vack on 1/5/2020.
 # ---------------------------
 #   Script Information [Required]
 # ---------------------------
-script_name = "JBetSystem"
+script_name = "JGambleSystem"
 website = "https://www.streamlabs.com"
 description = "blah"
 creator = "KanjiuAkuma"
