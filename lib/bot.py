@@ -1,14 +1,14 @@
 """
 Created by Joscha Vack on 1/6/2020.
 """
-import global_variables
-import info
-from config import save_whitelist
-from formatter import Formatter
-from logger import log_call, log
+import lib.global_variables
+import lib.info
+from lib import info
+from lib.config import save_whitelist
+from lib.formatter import Formatter
+from lib.logger import log_call, log
 
 
-# noinspection DuplicatedCode
 def _log_command(command):
     log_call('Bot:_log_command')
     params = ' '.join([command.GetParam(i) for i in range(command.GetParamCount())])
@@ -110,7 +110,6 @@ class Bot:
                             self._respond(command,
                                           self._formatter.format('core.text.malformed_command', user=user_name))
                         return
-
                 elif kw == self._config['core.disclaimer.keyword'] or kw == self._config['core.acknowledge.keyword']:
                     # disclaimer disable
                     if self._config['core.disclaimer.via_whisper'] and not command.IsWhisper():
@@ -124,7 +123,8 @@ class Bot:
                     if 3 != command.GetParamCount():
                         self._respond(command, self._formatter.format('core.text.malformed_command', user=user_name))
                         return
-                    if not self._check_access(command, 'gamble') or not self._check_whitelist(command, user_id, user_name):
+                    if not self._check_access(command, 'gamble') or not self._check_whitelist(command, user_id,
+                                                                                              user_name):
                         return
                     amount = self._parse_and_check_amount(command, 2)
                     if not amount:
@@ -134,7 +134,8 @@ class Bot:
                     if 4 != command.GetParamCount():
                         self._respond(command, self._formatter.format('core.text.malformed_command', user=user_name))
                         return
-                    if not self._check_access(command, 'guess') or not self._check_whitelist(command, user_id, user_name):
+                    if not self._check_access(command, 'guess') or not self._check_whitelist(command, user_id,
+                                                                                             user_name):
                         return
                     # get amount
                     amount = self._parse_and_check_amount(command, 3)
@@ -203,7 +204,8 @@ class Bot:
                         try:
                             amount = int(amount)
                         except:
-                            self._respond(command, self._formatter.format('core.text.malformed_command', user=user_name))
+                            self._respond(command,
+                                          self._formatter.format('core.text.malformed_command', user=user_name))
                 if kw == "add":
                     self._parent.AddPoints(user_id, user_name, amount)
                     log('info', 'Gave %s %d coins.' % (user_name, amount))
@@ -228,7 +230,8 @@ class Bot:
                 # cmd = lambda x: self._parent.SendDiscordDM(command.User, x)
             else:
                 target = 'Stream whisper'
-                cmd = lambda x: self._parent.SendStreamWhisper(command.User, x + ' ' + self._config['core.text.twitch_bug'])
+                cmd = lambda x: self._parent.SendStreamWhisper(command.User,
+                                                               x + ' ' + self._config['core.text.twitch_bug'])
         else:
             if command.IsFromDiscord() or 'discord' in target:
                 target = 'Discord chat'
@@ -248,14 +251,26 @@ class Bot:
 
     def _check_access(self, command, kind):
         log_call('Bot._check_access', command=command.Message, kind=kind)
-        if not self._parent.HasPermission(command.User, self._config[kind + '.permission.value'],
-                                          self._config[kind + '.permission.info']):
-            self._respond(command, self._formatter.format('core.text.no_command_permission', keyword='{gamble.keyword}',
+        cooldown = int(self._parent.GetUserCooldownDuration(info.script_name, kind, command.User))
+        if command.IsWhisper():  # ignore whisper gamble commands
+            log('debug', 'Ignoring command %s, is whisper' % command.Message)
+            return False
+        elif not self._parent.HasPermission(command.User, self._config[kind + '.permission.value'],
+                                            self._config[kind + '.permission.info']):
+            self._respond(command, self._formatter.format('core.text.no_command_permission',
+                                                          keyword='{' + kind + '.keyword}',
                                                           user=command.UserName))
+            log('debug', 'Ignoring command %s, no permission' % command.Message)
+            return False
+        elif cooldown:
+            self._respond(command, self._formatter.format('core.text.on_cooldown', keyword='{' + kind + '.keyword}',
+                                                          user=command.UserName, cooldown=cooldown))
+            log('debug', 'Ignoring command %s, on cooldown' % command.Message)
             return False
         elif not self._config[kind + '.enable']:
-            self._respond(command, self._formatter.format('core.text.command_disable', keyword='{gamble.keyword}',
+            self._respond(command, self._formatter.format('core.text.command_disable', keyword='{' + kind + '.keyword}',
                                                           user=command.UserName))
+            log('debug', 'Ignoring command %s, disabled' % command.Message)
             return False
         return True
 
@@ -287,8 +302,9 @@ class Bot:
             try:
                 amount = int(amount)
                 if self._parent.GetPoints(command.User) < amount:  # check user points
-                    self._respond(command, self._formatter.format('core.text.not_enough_currency', user=command.UserName,
-                                                                  currency=self._parent.GetCurrencyName()))
+                    self._respond(command,
+                                  self._formatter.format('core.text.not_enough_currency', user=command.UserName,
+                                                         currency=self._parent.GetCurrencyName()))
                     return None
                 return amount
             except:  # parsing failed -> invalid input
@@ -302,25 +318,31 @@ class Bot:
     def _gamble(self, command, amount):
         log_call('Bot._gamble', command=command.Message, amount=amount)
         roll = self._parent.GetRandom(0, 100)
-        if roll <= int(self._config['gamble.chance']):
-            amount *= int(self._config['gamble.win_multiplier'])
-            log('debug', '%s won %d coins with roll %d' % (command.UserName, amount, roll))
+        add = False
+        if self._config['gamble.triple.enable'] and roll < int(self._config['gamble.triple.chance']):
+            amount *= int(self._config['gamble.win_multiplier']) * 3
+            add = True
+        elif self._config['gamble.double.enable'] and roll < int(self._config['gamble.double.chance']):
+            amount *= int(self._config['gamble.win_multiplier']) * 2
+            add = True
+        elif roll <= int(self._config['gamble.chance']):
+            amount *= int(self._config['gamble.win_multiplier']) * 2
+            add = True
+
+        if add:
             self._parent.AddPoints(command.User, command.UserName, amount)
-            self._respond(command, self._formatter.format('gamble.text.win',
-                                                          roll=100 - roll,
-                                                          user=command.UserName,
-                                                          payout=amount,
-                                                          currency=self._parent.GetCurrencyName(),
-                                                          total=self._parent.GetPoints(command.User)))
         else:
-            log('debug', '%s lost %d coins with roll %d' % (command.UserName, amount, roll))
             self._parent.RemovePoints(command.User, command.UserName, amount)
-            self._respond(command, self._formatter.format('gamble.text.lose',
-                                                          roll=100 - roll,
-                                                          user=command.UserName,
-                                                          loss=amount,
-                                                          currency=self._parent.GetCurrencyName(),
-                                                          total=self._parent.GetPoints(command.User)))
+
+        log('debug', '%s %s %d coins with roll %d' % (command.UserName, 'won' if add else 'lost', amount, roll))
+        self._respond(command, self._formatter.format('gamble.text.' + ('win' if add else 'lose'),
+                                                      roll=100 - roll,
+                                                      user=command.UserName,
+                                                      payout=amount,
+                                                      loss=amount,
+                                                      currency=self._parent.GetCurrencyName(),
+                                                      total=self._parent.GetPoints(command.User)))
+        self._parent.AddUserCooldown(info.script_name, 'gamble', command.User, self._config['gamble.cooldown'])
 
     def _guess(self, command, guess, amount):
         log_call('Bot._guess', command=command.Message, guess=guess, amount=amount)
@@ -345,10 +367,16 @@ class Bot:
                                                           loss=amount,
                                                           total=self._parent.GetPoints(command.User),
                                                           currency=self._parent.GetCurrencyName()))
+        self._parent.AddUserCooldown(info.script_name, 'guess', command.User, self._config['guess.cooldown'])
 
-    def _d20(self, user_id, user_name):
-        log_call('Bot._d20', user_name=user_name, user_id=user_id)
-        pass
+    def _d20(self, command):
+        log_call('Bot._d20', command=command.Message)
+        texts = self._config['d20.text.results'].replpace('\r').split('\n')
+        if not texts[-1]:
+            texts = texts[:-1]
+        res = texts[self._parent.GetRando(0, len(texts))]
+        self._respond(command, self._formatter.format_message(res, user=command.UserName, random_user=self._parent.GetRandomActiveUser()))
+        self._parent.AddUserCooldown(info.script_name, 'd20', command.User, self._config['d20.cooldown'])
 
     @property
     def config(self):

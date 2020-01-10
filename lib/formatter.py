@@ -51,7 +51,7 @@ other identifiers:
 """
 import re
 
-from logger import log_call
+from lib.logger import log_call
 
 # regex for replacements
 reg = re.compile(r'{(.*?)}')
@@ -64,18 +64,19 @@ class Formatter:
 
     def format(self, key, *data, **kw_data):
         log_call('Formatter.format', key=key, data=data, kw_data=kw_data)
-        return self._format_text(self._config[key], *data, **kw_data)
+        r = self._format_text(self._config[key], *data, **kw_data)
+        return r[0].upper() + r[1:]
 
     def format_message(self, message, *data, **kw_data):
         log_call('Formatter.message', message=message, data=data, kw_data=kw_data)
-        return self._format_text(message, *data, **kw_data).capitalize()
+        r = self._format_text(message, *data, **kw_data)
+        return r[0].upper() + r[1:]
 
     def _format_text(self, text, *data, **kw_data):
         log_call('Formatter._format_text', text=text, data=data, kw_data=kw_data)
         matches = list(reg.finditer(text))
         for m in reversed(matches):
             k = m.group(1)
-            v = m.group(0)
             if k in kw_data:
                 v = self._format_text(str(kw_data[k]), **kw_data)
             elif k in self._config:

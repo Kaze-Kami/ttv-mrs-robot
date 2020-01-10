@@ -127,6 +127,13 @@
         "tooltip": "Text shown when a user tries to gamble before acknowledging the disclaimer.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{gamble.keyword} (gamble keyword),\n\n\t{guess.keyword} (guess keyword),\n\n\t{core.disclaimer.command} (disclaimer command)",
         "group": "Core"
     },
+    "core.text.on_cooldown": {
+        "type": "textbox",
+        "value": "{keyword} is still on cooldown for {cooldown} seconds, {user}",
+        "label": "Command on cooldown text",
+        "tooltip": "Text shown when a user tries to use a command but is on cooldown.\n\rAvailable formats are:\n\r\t{keyword} (the keyword used)\n\n\t{cooldown} (the cooldown in seconds),\n\n\t{user} (mentions the user)",
+        "group": "Core"
+    },
     "core.text.disclaimer_via_whisper": {
         "type": "textbox",
         "value": "You need to send this message via whisper, {user}",
@@ -170,6 +177,13 @@
         "tooltip": "Whether or not the gamble command is enabled",
         "group": "Gamble"
     },
+    "gamble.keyword": {
+        "type": "textbox",
+        "value": "gamble",
+        "label": "Gamble keyword",
+        "tooltip": "Keyword used to gamble",
+        "group": "Gamble"
+    },
     "gamble.permission.value": {
         "type": "dropdown",
         "value": "everyone",
@@ -189,7 +203,17 @@
         "value": "",
         "label": "Gamble permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
-        "group": "Core"
+        "group": "Gamble"
+    },
+    "gamble.cooldown": {
+        "type": "slider",
+        "value": 10,
+        "min": 0,
+        "max": 300,
+        "ticks": 5,
+        "label": "Gamble cooldown",
+        "tooltip": "Time a user has to wait before gambling again",
+        "group": "Gamble"
     },
     "gamble.text.win": {
         "type": "textbox",
@@ -219,7 +243,7 @@
         "max": 100,
         "ticks": 1,
         "label": "Gamble winning chance",
-        "tooltip": "Chance to win when gambling in percent",
+        "tooltip": "Chance in percent to win when gambling",
         "group": "Gamble"
     },
     "gamble.win_multiplier": {
@@ -232,12 +256,53 @@
         "tooltip": "Payout = amount * multiplier",
         "group": "Gamble"
     },
+    "gamble.double.enable": {
+        "type": "checkbox",
+        "label": "Gamble double chance enable",
+        "value": true,
+        "tooltip": "Whether or not the chance to double the winnings is enable",
+        "group": "Gamble"
+    },
+    "gamble.double.chance": {
+        "type": "slider",
+        "value": 10,
+        "min": 0,
+        "max": 100,
+        "ticks": 1,
+        "label": "Gamble double chance",
+        "tooltip": "Chance in percent to double the winnings when gambling",
+        "group": "Gamble"
+    },
+    "gamble.triple.enable": {
+        "type": "checkbox",
+        "label": "Gamble triple chance enable",
+        "value": true,
+        "tooltip": "Whether or not the chance to triple the winnings is enable",
+        "group": "Gamble"
+    },
+    "gamble.triple.chance": {
+        "type": "slider",
+        "value": 5,
+        "min": 0,
+        "max": 100,
+        "ticks": 1,
+        "label": "Gamble triple chance",
+        "tooltip": "Chance in percent to double the winnings when gambling",
+        "group": "Gamble"
+    },
     
     "guess.enable": {
         "type": "checkbox",
         "label": "Guess enable",
         "value": true,
         "tooltip": "Whether or not the guess command is enabled",
+        "group": "Guess"
+    },
+    "guess.keyword": {
+        "type": "textbox",
+        "value": "guess",
+        "label": "Guess keyword",
+        "tooltip": "Keyword used to Guess",
         "group": "Guess"
     },
     "guess.permission.value": {
@@ -259,7 +324,17 @@
         "value": "",
         "label": "Guess permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
-        "group": "Core"
+        "group": "Guess"
+    },
+    "guess.cooldown": {
+        "type": "slider",
+        "value": 10,
+        "min": 0,
+        "max": 300,
+        "ticks": 5,
+        "label": "Guess cooldown",
+        "tooltip": "Time a user has to wait before guessing again",
+        "group": "Guess"
     },
     "guess.text.win": {
         "type": "textbox",
@@ -270,7 +345,7 @@
     },
     "guess.text.lose": {
         "type": "textbox",
-        "value": "{user}\\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.",
+        "value": "{user}'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.",
         "label": "Guess lose text",
         "tooltip": "Text shown when a user guesses wrong.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{guess} (the guessed number),\n\r\t{roll} (the rolled number)\n\r\t{loss} (the loss)\n\r\t{total} (users total currency)\n\r\t{currency} (currency name)",
         "group": "Guess"
@@ -300,6 +375,66 @@
         "ticks": 0.5,
         "label": "Guess win multiplier",
         "tooltip": "Payout = amount * multiplier",
+        "group": "Guess"
+    },
+
+    "d20.enable": {
+        "type": "checkbox",
+        "label": "D20 enable",
+        "value": true,
+        "tooltip": "Whether or not the d20 command is enabled",
+        "group": "D20"
+    },
+    "d20.keyword": {
+        "type": "textbox",
+        "value": "d20",
+        "label": "D20 keyword",
+        "tooltip": "Keyword used to roll the d20",
+        "group": "D20"
+    },
+    "d20.permission.value": {
+        "type": "dropdown",
+        "value": "everyone",
+        "items": [
+            "everyone",
+            "moderator",
+            "subscriber",
+            "user_specific",
+            "editor"
+        ],
+        "label": "D20 permission",
+        "tooltip": "Who is able to use the d20 command",
+        "group": "D20"
+    },
+    "d20.permission.info": {
+        "type": "textbox",
+        "value": "",
+        "label": "D20 permission info",
+        "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
+        "group": "D20"
+    },
+    "d20.cooldown": {
+        "type": "slider",
+        "value": 10,
+        "min": 0,
+        "max": 300,
+        "ticks": 5,
+        "label": "D20 cooldown",
+        "tooltip": "Time a user has to wait before rolling the d20 again",
+        "group": "D20"
+    },
+    "d20.text.results": {
+        "type": "textbox",
+        "value": "d20 TEXT1\nd20 TEXT2\nd20 TEXT3\nd20 TEXT4\nd20 TEXT5\nd20 TEXT6",
+        "label": "D20 texts",
+        "tooltip": "Texts used for d20 rolls, separate texts by newlines.\n\nAvailable formats are:\n\n\t{user} (mentions the user),\n\n\t{random_user} (mentions a random user)",
+        "group": "Guess"
+    },
+    "d20.text.help": {
+        "type": "textbox",
+        "value": "Type {d20.command} to roll the d20",
+        "label": "Guess help text",
+        "tooltip": "D20 help text.\n\rAvailable formats are:\n\r\t{d20.command} (the d20 command)",
         "group": "Guess"
     }
 }

@@ -6,9 +6,8 @@ import codecs
 import json
 import collections
 
-import global_variables
-from logger import log_call, log
-from lib import info
+from lib import global_variables
+from lib.logger import log_call, log
 
 
 def _write_json(path, data, js=False):
@@ -62,6 +61,7 @@ def _default_config_data():
         'core.text.not_enough_currency': 'You don\'t have enough {currency} to do this, {user}.',
         'core.text.disclaimer_via_whisper': 'You need to send this message via whisper, {user}',
         'core.text.not_acknowledged': 'I\'m sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.',
+        'core.text.on_cooldown': '{keyword} is still on cooldown for {cooldown} seconds, {user}',
         'core.text.disclaimer_disable': 'The disclaimer is currently disabled, {user}.',
         'core.text.disclaimer': 'Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.',
         'core.text.acknowledged': 'You can {gamble.keyword} and {guess.keyword} now {user}.',
@@ -71,26 +71,35 @@ def _default_config_data():
         'gamble.keyword': 'gamble',
         'gamble.permission.value': 'everyone',
         'gamble.permission.info': '',
+        'gamble.cooldown': 10,
         'gamble.text.win': 'Roll was {roll}. {user} wins {payout} {currency} and has {total} {currency} now.',
         'gamble.text.lose': 'Roll was {roll}. {user} looses {loss} {currency} and has {total} {currency} now.',
         'gamble.text.help': 'Type {gamble.command} [amount] to gamble. Chances to win are {gamble.chance}%',
-        'gamble.chance': 10,
-        'gamble.win_multiplier': 1,
+        'gamble.chance': 25,
+        'gamble.win_multiplier': 2,
+        'gamble.double.enable': True,
+        'gamble.double.chance': 10,
+        'gamble.triple.enable': True,
+        'gamble.triple.chance': 5,
+
         # guess settings
         'guess.enable': True,
         'guess.keyword': 'guess',
         'guess.permission.value': 'everyone',
         'guess.permission.info': '',
+        'guess.cooldown': 10,
         'guess.text.win': '{user}\'s guess ({guess}) was right! He wins {payout} and has {total} {currency} now.',
         'guess.text.lose': '{user}\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.',
         'guess.text.help': 'Type {guess.command} [guess] [amount] to guess. [guess] must be between 0 and {guess.max_val}',
         'guess.max_val': 20,
         'guess.win_multiplier': 5,
+
         # d20 settings
-        'd20.enable': False,
+        'd20.enable': True,
         'd20.keyword': 'd20',
         'd20.permission.value': 'everyone',
         'd20.permission.info': '',
+        'd20.cooldown': 10,
         'd20.text.results': 'd20 TEXT1\nd20 TEXT2\nd20 TEXT3\nd20 TEXT4\nd20 TEXT5\nd20 TEXT6',
         'd20.text.help': 'Type {d20.command} to roll the d20.',
     }
@@ -149,8 +158,8 @@ def save_config(config):
     del data['core.acknowledge.whitelist']
 
     # save and remove jackpot
-    del config['core.jackpot.entries']
-    del config['core.jackpot.sum']
+    del data['core.jackpot.entries']
+    del data['core.jackpot.sum']
 
     # remove extras
     try:
@@ -225,9 +234,9 @@ def _recursive_to_dict(d):
 
 def _format_dict(d, ind='', ind_inc=''):
     return '\n'.join(['%s%s: %s' % (
-    ind, k, str(v) if '\n' not in str(v) else ('\n' + ind + ind_inc).join(('\n' + v).replace('\r', '').split('\n')))
-                      if not isinstance(v, collections.MutableMapping)
-                      else ind + k + '\n' + _format_dict(v, ind + ind_inc, ind_inc) for k, v in d.items()])
+        ind, k, str(v) if '\n' not in str(v) else ('\n' + ind + ind_inc).join(('\n' + v).replace('\r', '').split('\n')))
+        if not isinstance(v, collections.MutableMapping)
+        else ind + k + '\n' + _format_dict(v, ind + ind_inc, ind_inc) for k, v in d.items()])
 
 
 class Config:

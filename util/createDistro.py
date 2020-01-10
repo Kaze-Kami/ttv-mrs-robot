@@ -38,18 +38,17 @@ def remove_files(root):
 
 if __name__ == '__main__':
     # dirs to copy
-    base_path = path.join(r'D:\Dev\Python\JBetSystem')
-    dist_path = path.join(base_path, r'dist\JBetSystem.zip')
+    base_path = path.join(r'D:\Dev\Python\JGambleSystem')
+    dist_path = path.join(base_path, r'dist\JGambleSystem.zip')
     lib_path = path.join(base_path, 'lib')
     overlays_path = path.join(base_path, 'Overlays')
     resource_path = path.join(base_path, 'resources')
 
     # zip root folder
-    zip_root = path.join('JBetSystem')
+    zip_root = path.join('JGambleSystem')
 
     # streamlabs scripts dir
-    scripts_path = path.join(
-        r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\JBetSystem')
+    scripts_path = path.join(r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\JGambleSystem')
     if not path.exists(scripts_path):
         mkdir(scripts_path)
     remove_files(scripts_path)
