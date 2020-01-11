@@ -6,13 +6,14 @@ sys.path.append(os.path.dirname(__file__))
 
 import clr
 import traceback
+import ctypes
 
 from lib import info
 from lib import global_variables
 from lib import logger
 
 from lib.logger import log_call, log, log_levels
-from lib.config import load_config, save_config, default_config
+from lib.config import load_config, save_config, default_config, save_whitelist, save_jackpot
 from lib.bot import Bot
 
 clr.AddReference("IronPython.SQLite.dll")
@@ -65,13 +66,17 @@ def Tick():
     try:
         # log_call('JBetSystem:Tick', trace=True)
         global bot
-        # bot.tick()
+        bot.tick()
     except:
         log('error', traceback.format_exc())
 
 
 def Parse(parse_string, user_id, username, target_id, target_name, message):
-    log_call('JBetSystem:Parse', parse_string=parse_string, user_id=user_id, username=username, target_id=target_id, target_name=target_name, message=message)
+    try:
+        log_call('JBetSystem:Parse', parse_string=parse_string, user_id=user_id, username=username, target_id=target_id,
+                 target_name=target_name, message=message)
+    except:
+        log('error', traceback.format_exc())
 
 
 def ReloadSettings(jsondata):
@@ -88,7 +93,7 @@ def Unload():
     try:
         log_call('JBetSystem:Unload')
         global bot
-        # save_config(bot.config)
+        bot.shutdown()
     except:
         log('error', traceback.format_exc())
 
@@ -103,12 +108,50 @@ def ScriptToggled(state):
 # ---------------------------
 #   Custom functions for ui
 # ---------------------------
-
 def RestoreDefaultSettings():
     try:
         log_call('JBetSystem:RestoreDefaultSettings')
-        global bot
-        bot.config = default_config()
-        save_config(bot.config)
-    except Exception as e:
-        log('error', repr(e))
+        ret = ctypes.windll.user32.MessageBoxW(0, u"You are about to reset the settings, "
+                                                  "are you sure you want to continue?"
+                                                  "This will not clear the whitelist or jackpot file",
+                                               u"Reset settings file?", 4)
+        if ret == 6:  # yes is 6
+            global bot
+            bot.config = default_config()
+            save_config(bot.config)
+            ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully restored to default values",
+                                                   u"Ok!", 0)
+    except:
+        log('error', traceback.format_exc())
+
+
+def ClearWhitelist():
+    try:
+        log_call('JBetSystem:ClearWhitelist')
+        ret = ctypes.windll.user32.MessageBoxW(0, u"You are about to clear the whitelist, "
+                                                  "are you sure you want to continue?",
+                                               u"Clear whitelist?", 4)
+        if ret == 6:  # yes is 6
+            global bot
+            bot.config['core.acknowledge.whitelist'] = []
+            save_whitelist(bot.config)
+            ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully cleared the whitelist",
+                                                   u"Ok!", 0)
+    except:
+        log('error', traceback.format_exc())
+
+
+def ClearJackpot():
+    try:
+        log_call('JBetSystem:ClearJackpot')
+        ret = ctypes.windll.user32.MessageBoxW(0, u"You are about to clear the jackpot, "
+                                                  "are you sure you want to continue?",
+                                               u"Clear jackpot?", 4)
+        if ret == 6:  # yes is 6
+            global bot
+            bot.config['core.jackpot.entries'] = []
+            save_jackpot(bot.config)
+            ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully cleared the jackpot",
+                                                   u"Ok!", 0)
+    except:
+        log('error', traceback.format_exc())

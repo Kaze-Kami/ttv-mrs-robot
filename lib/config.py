@@ -49,23 +49,38 @@ def _default_config_data():
         'core.permission.value': 'everyone',
         'core.permission.info': '',
         'core.all_keyword': 'all',
-        'core.disclaimer.enable': True,
-        'core.disclaimer.via_whisper': True,
-        'core.disclaimer.keyword': 'disclaimer',
-        'core.acknowledge.keyword': 'acknowledge',
         'core.text.help': 'Available commands: {gamble.command}, {guess.command}, {d20.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {core.disclaimer.command}.',
         'core.text.no_permission': 'You have no permission to use the commands, {user}.',
         'core.text.no_command_permission': 'You have no permission to use the {keyword} command, {user}.',
         'core.text.command_disable': '{keyword} is currently disabled, {user}.',
         'core.text.malformed_command': 'I did not get that. Type {core.help.command} for help and try again.',
         'core.text.not_enough_currency': 'You don\'t have enough {currency} to do this, {user}.',
-        'core.text.disclaimer_via_whisper': 'You need to send this message via whisper, {user}',
-        'core.text.not_acknowledged': 'I\'m sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.',
         'core.text.on_cooldown': '{keyword} is still on cooldown for {cooldown} seconds, {user}',
-        'core.text.disclaimer_disable': 'The disclaimer is currently disabled, {user}.',
-        'core.text.disclaimer': 'Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.',
-        'core.text.acknowledged': 'You can {gamble.keyword} and {guess.keyword} now {user}.',
         'core.text.twitch_bug': 'Please close the whisper chat with the \'X\' and reopen it after replying to see new messages from me (that\'s a nice twitch but isn\'t it?).',
+
+        # disclaimer settings
+        'disclaimer.enable': True,
+        'disclaimer.via_whisper': True,
+        'disclaimer.keyword': 'disclaimer',
+        'disclaimer.acknowledge_keyword': 'acknowledge',
+        'disclaimer.text.via_whisper': 'You need to send this message via whisper, {user}',
+        'disclaimer.text.disable': 'The disclaimer is currently disabled, {user}.',
+        'disclaimer.text.disclaimer': 'Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.',
+        'disclaimer.text.acknowledged': 'You can {gamble.keyword} and {guess.keyword} now {user}.',
+        'disclaimer.text.not_acknowledged': 'I\'m sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.',
+
+        # jackpot settings
+        'jackpot.enable': True,
+        'jackpot.keyword': 'jackpot',
+        'jackpot.number': 100,
+        'jackpot.percentage': 100,
+        'jackpot.decay.enable': True,
+        'jackpot.decay.seconds': 20,
+        'jackpot.decay.hours': 0,
+        'jackpot.decay.minutes': 0,
+        'jackpot.text.content': 'The jackpot currently contains {jackpot.sum} {currency}, {user}',
+        'jackpot.text.win': '{user} rolled {roll} and won the jackpot ({jackpot.sum} {currency})! He has {total} {currency} now.',
+
         # gamble settings
         'gamble.enable': True,
         'gamble.keyword': 'gamble',
@@ -100,7 +115,7 @@ def _default_config_data():
         'd20.permission.value': 'everyone',
         'd20.permission.info': '',
         'd20.cooldown': 10,
-        'd20.text.results': 'd20 TEXT1\nd20 TEXT2\nd20 TEXT3\nd20 TEXT4\nd20 TEXT5\nd20 TEXT6',
+        'd20.text.results': 'd20 TEXT1;d20 TEXT2;20 TEXT3;d20 TEXT4;d20 TEXT5;d20 TEXT6',
         'd20.text.help': 'Type {d20.command} to roll the d20.',
     }
     return data
@@ -120,18 +135,21 @@ def load_config(jsondata=None):
         raw_data.update(_read_json(global_variables.whitelist_path))
     except Exception as e:
         log('error', 'Can not load whitelist file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
-        raw_data['core.acknowledge.whitelist'] = []
+        raw_data['disclaimer.whitelist'] = []
 
     # read jackpot
     try:
         jackpot_info = _read_json(global_variables.jackpot_info_path)
-        raw_data['core.jackpot.entries'] = [(v, t) for v, t in zip(jackpot_info['core.jackpot.values'],
-                                                                   jackpot_info['core.jackpot.times'])]
-        raw_data['core.jackpot.sum'] = sum(jackpot_info['core.jackpot.values'])
+        raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
+                                                                   jackpot_info['jackpot.times'])]
+        total = 0
+        for v, t in raw_data['jackpot.entries']:
+            total += v
+        raw_data['jackpot.sum'] = int(total)
     except Exception as e:
         log('error', 'Can not load jackpot info file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
-        raw_data['core.jackpot.sum'] = 0
-        raw_data['core.jackpot.entries'] = []
+        raw_data['jackpot.entries'] = []
+        raw_data['jackpot.sum'] = 0
 
     # read config
     if jsondata:
@@ -143,6 +161,8 @@ def load_config(jsondata=None):
             log('error', 'Can not load config file from %s: %s, falling back to default config' % (
                 global_variables.settings_path, repr(e)))
             raw_data.update(_default_config_data())
+
+    raw_data['jackpot.decay.total'] = int(int(raw_data['jackpot.decay.seconds']) + int(raw_data['jackpot.decay.minutes']) * 60 + int(raw_data['jackpot.decay.hours']) * 24 * 60)
 
     parsed_data = _parse_config(raw_data)
     config = Config(parsed_data)
@@ -160,6 +180,7 @@ def save_config(config):
     # save and remove jackpot
     del data['core.jackpot.entries']
     del data['core.jackpot.sum']
+    del data['jackpot.decay.total']
 
     # remove extras
     try:
@@ -202,12 +223,12 @@ def save_whitelist(config):
 
 def save_jackpot(config):
     jackpot_data = {
-        'core.jackpot.values': [],
-        'core.jackpot.times': []
+        'jackpot.values': [],
+        'jackpot.times': []
     }
-    for e in config['core.jackpot.entries']:
-        jackpot_data['core.jackpot.values'].append(e[0])
-        jackpot_data['core.jackpot.times'].append(e[1])
+    for e in config['jackpot.entries']:
+        jackpot_data['jackpot.values'].append(e[0])
+        jackpot_data['jackpot.times'].append(e[1])
     try:
         _write_json(global_variables.jackpot_info_path, jackpot_data)
     except Exception as e:
@@ -262,6 +283,13 @@ class Config:
         for i in indices:
             val = val[i]
         return val
+
+    def __setitem__(self, key, value):
+        indices = key.split('.')
+        val = self._data_dict
+        for i in indices[:-1]:
+            val = val[i]
+        val[indices[-1]] = value
 
     def __contains__(self, key):
         log_call('Config.__contains__', key=key)

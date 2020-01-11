@@ -1,8 +1,8 @@
 """
 Created by Joscha Vack on 1/7/2020.
 """
-import global_variables
-import info
+from lib import global_variables
+from lib import info
 
 log_levels = {
     'trace': 0,

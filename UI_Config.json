@@ -50,44 +50,16 @@
         "tooltip": "Keyword to indicate the user wants to gamble all of his currency",
         "group": "Core"
     },
-    "core.disclaimer.enable": {
-        "type": "checkbox",
-        "label": "Disclaimer enable",
-        "value": true,
-        "tooltip": "Whether or not to require acknowledgment of the gambling disclaimer before gambling",
-        "group": "Core"
-    },
-    "core.disclaimer.via_whisper": {
-        "type": "checkbox",
-        "label": "Disclaimer via whisper",
-        "value": true,
-        "tooltip": "Whether or not to conclude disclaimer acknowledgement via whisper message",
-        "group": "Core"
-    },
-    "core.disclaimer.keyword": {
-        "type": "textbox",
-        "value": "disclaimer",
-        "label": "Disclaimer keyword",
-        "tooltip": "Keyword to display the disclaimer",
-        "group": "Core"
-    },
-    "core.acknowledge.keyword": {
-        "type": "textbox",
-        "value": "acknowledge",
-        "label": "Disclaimer acknowledge keyword",
-        "tooltip": "Keyword to acknowledge the disclaimer",
-        "group": "Core"
-    },
     "core.text.help": {
         "type": "textbox",
-        "value": "Available commands: {gamble.command}, {guess.command}, {d20.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {core.disclaimer.command}.",
+        "value": "Available commands: {gamble.command}, {guess.command}, {d20.command}, {jackpot.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {disclaimer.command}.",
         "label": "Help text",
-        "tooltip": "Help text shown when using the help command.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{guess.command} (guess command),\n\r\t{d20.command} (d20 command),\n\r\t{core.help.command} (help command),\n\r\t{core.disclaimer.command} (disclaimer command)",
+        "tooltip": "Help text shown when using the help command.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{guess.command} (guess command),\n\r\t{d20.command} (d20 command),\n\n\t{jackpot.command} (jackpot command),\n\r\t{core.help.command} (help command),\n\r\t{disclaimer.command} (disclaimer command)",
         "group": "Core"
     },
     "core.text.no_permission": {
         "type": "textbox",
-        "value": "You have no permission to use the commands, {user}.",
+        "value": "You have no permission to use the bot, {user}.",
         "label": "No permission text",
         "tooltip": "Text shown when user attempts to use the bot without permission to do so.\n\rAvailable formats are:\n\r\t{user} (mentions the user)",
         "group": "Core"
@@ -120,46 +92,11 @@
         "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{currency} (currency name),\n\r\t{user} (mentions the user)",
         "group": "Core"
     },
-    "core.text.not_acknowledged": {
-        "type": "textbox",
-        "value": "I'm sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.",
-        "label": "Disclaimer not acknowledged text",
-        "tooltip": "Text shown when a user tries to gamble before acknowledging the disclaimer.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{gamble.keyword} (gamble keyword),\n\n\t{guess.keyword} (guess keyword),\n\n\t{core.disclaimer.command} (disclaimer command)",
-        "group": "Core"
-    },
     "core.text.on_cooldown": {
         "type": "textbox",
         "value": "{keyword} is still on cooldown for {cooldown} seconds, {user}",
         "label": "Command on cooldown text",
         "tooltip": "Text shown when a user tries to use a command but is on cooldown.\n\rAvailable formats are:\n\r\t{keyword} (the keyword used)\n\n\t{cooldown} (the cooldown in seconds),\n\n\t{user} (mentions the user)",
-        "group": "Core"
-    },
-    "core.text.disclaimer_via_whisper": {
-        "type": "textbox",
-        "value": "You need to send this message via whisper, {user}",
-        "label": "Disclaimer via whisper message",
-        "tooltip": "Text shown when disclaimer via whisper is enable but user tries to use those commands in stream chat.\n\rAvailable formats:\n\r\t{user} (mentions the user)",
-        "group": "Core"
-    },
-    "core.text.disclaimer": {
-        "type": "textbox",
-        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.",
-        "label": "Disclaimer",
-        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{core.acknowledge.command} (command to acknowledge the disclaimer)",
-        "group": "Core"
-    },
-    "core.text.disclaimer_disable": {
-        "type": "textbox",
-        "value": "The disclaimer is currently disabled, {user}.",
-        "label": "Disclaimer disable text",
-        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{user} (mentions the user)",
-        "group": "Core"
-    },
-    "core.text.acknowledged": {
-        "type": "textbox",
-        "value": "You can {gamble.keyword} and {guess.keyword} now {user}.",
-        "label": "Acknowledged text",
-        "tooltip": "Text shown when a user acknowledges the disclaimer.\n\rAvailable formats are:\n\r\t{gamble.keyword} (gamble keyword),\n\r\t{guess.keyword} (guess keyword),\n\r\t{user} (mentions the user)",
         "group": "Core"
     },
     "core.text.twitch_bug": {
@@ -168,6 +105,144 @@
         "label": "Twitch whisper bug text",
         "tooltip": "Text appended to all whisper messages as this is a twitch bug and quite annoying",
         "group": "Core"
+    },
+
+    "disclaimer.enable": {
+        "type": "checkbox",
+        "label": "Disclaimer enable",
+        "value": true,
+        "tooltip": "Whether or not to require acknowledgment of the gambling disclaimer before gambling",
+        "group": "Disclaimer"
+    },
+    "disclaimer.via_whisper": {
+        "type": "checkbox",
+        "label": "Disclaimer via whisper",
+        "value": true,
+        "tooltip": "Whether or not to conclude disclaimer acknowledgement via whisper message",
+        "group": "Disclaimer"
+    },
+    "disclaimer.keyword": {
+        "type": "textbox",
+        "value": "disclaimer",
+        "label": "Disclaimer keyword",
+        "tooltip": "Keyword to display the disclaimer",
+        "group": "Disclaimer"
+    },
+    "disclaimer.acknowledge_keyword": {
+        "type": "textbox",
+        "value": "acknowledge",
+        "label": "Disclaimer acknowledge keyword",
+        "tooltip": "Keyword to acknowledge the disclaimer",
+        "group": "Disclaimer"
+    },
+    "disclaimer.text.disclaimer_via_whisper": {
+        "type": "textbox",
+        "value": "You need to send this message via whisper, {user}",
+        "label": "Disclaimer via whisper message",
+        "tooltip": "Text shown when disclaimer via whisper is enable but user tries to use those commands in stream chat.\n\rAvailable formats:\n\r\t{user} (mentions the user)",
+        "group": "Disclaimer"
+    },
+    "disclaimer.text.disclaimer": {
+        "type": "textbox",
+        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.",
+        "label": "Disclaimer",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{core.acknowledge.command} (command to acknowledge the disclaimer)",
+        "group": "Disclaimer"
+    },
+    "disclaimer.text.disable": {
+        "type": "textbox",
+        "value": "The disclaimer is currently disabled, {user}.",
+        "label": "Disclaimer disable text",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{user} (mentions the user)",
+        "group": "Disclaimer"
+    },
+    "disclaimer.text.acknowledged": {
+        "type": "textbox",
+        "value": "You can {gamble.keyword} and {guess.keyword} now {user}.",
+        "label": "Acknowledged text",
+        "tooltip": "Text shown when a user acknowledges the disclaimer.\n\rAvailable formats are:\n\r\t{gamble.keyword} (gamble keyword),\n\r\t{guess.keyword} (guess keyword),\n\r\t{user} (mentions the user)",
+        "group": "Disclaimer"
+    },
+    "disclaimer.text.not_acknowledged": {
+        "type": "textbox",
+        "value": "I'm sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {disclaimer.command} to display it.",
+        "label": "Disclaimer not acknowledged text",
+        "tooltip": "Text shown when a user tries to gamble before acknowledging the disclaimer.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{gamble.keyword} (gamble keyword),\n\n\t{guess.keyword} (guess keyword),\n\n\t{disclaimer.command} (disclaimer command)",
+        "group": "Disclaimer"
+    },
+
+    "jackpot.enable": {
+        "type": "checkbox",
+        "label": "Jackpot enable",
+        "value": true,
+        "tooltip": "Whether or not to enable the jackpot",
+        "group": "Jackpot"
+    },
+    "jackpot.keyword": {
+        "type": "textbox",
+        "value": "jackpot",
+        "label": "Jackpot keyword",
+        "tooltip": "Keyword used to display the jackpot",
+        "group": "Jackpot"
+    },
+    "jackpot.number": {
+        "type": "numberbox",
+        "value": 100,
+        "label": "Jackpot number",
+        "tooltip": "Number to roll to get the jackpot. Must be between 1 and 100",
+        "group": "Jackpot"
+    },
+    "jackpot.percentage": {
+        "type": "slider",
+        "value": 100,
+        "min": 0,
+        "max": 100,
+        "ticks": 1,
+        "label": "Jackpot entry percentage",
+        "tooltip": "How much of a users loss to add to the jackpot (added = entry * percentage / 100) ",
+        "group": "Jackpot"
+    },
+    "jackpot.decay.enable": {
+        "type": "checkbox",
+        "label": "Jackpot decay enable",
+        "value": true,
+        "tooltip": "Whether or not the jackpot decays",
+        "group": "Jackpot"
+    },
+    "jackpot.decay.seconds": {
+        "type": "numberbox",
+        "value": 20,
+        "label": "Jackpot decay seconds",
+        "tooltip": "Seconds till the an entry in the jackpot decays",
+        "group": "Jackpot"
+    },
+    "jackpot.decay.minutes": {
+        "type": "numberbox",
+        "value": 0,
+        "label": "Jackpot decay minutes",
+        "tooltip": "Minutes till the an entry in the jackpot decays",
+        "group": "Jackpot"
+    },
+    "jackpot.decay.hours": {
+        "type": "numberbox",
+        "value": 0,
+        "label": "Jackpot decay hours",
+        "tooltip": "Hours till the an entry in the jackpot decays",
+        "group": "Jackpot"
+    },
+    "jackpot.text.content": {
+        "type": "textbox",
+        "value": "The jackpot currently contains {jackpot.sum} {currency}, {user}",
+        "label": "Jackpot content text",
+        "tooltip": "Text displayed when a user uses the jackpot keyword.\n\rAvailable formats are:\n\r\t{jackpot.sum} (coins in the jackpot),\n\n\t{currency} (currency name),\n\n\t{user} (mentions the user)",
+        "group": "Jackpot"
+    },
+    "jackpot.text.win": {
+        "type": "textbox",
+        "value": "{user} rolled {roll} and won the jackpot ({jackpot.sum} {currency})! He has {total} {currency} now.",
+        "label": "Jackpot win text",
+        "tooltip": "Text displayed when a user wins the jackpot.\n\nAvailable formats are:\n\n\t{user} (mentions the user),\n\n\t{roll} (the users roll),\n\n\t{jackpot.sum} (coins in the jackpot),\n\n\t{currency} (the currency name),\n\n\t{total} (users total coins)",
+        "group": "Jackpot"
     },
 
     "gamble.enable": {
@@ -206,11 +281,8 @@
         "group": "Gamble"
     },
     "gamble.cooldown": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 10,
-        "min": 0,
-        "max": 300,
-        "ticks": 5,
         "label": "Gamble cooldown",
         "tooltip": "Time a user has to wait before gambling again",
         "group": "Gamble"
@@ -247,11 +319,8 @@
         "group": "Gamble"
     },
     "gamble.win_multiplier": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 2,
-        "min": 0,
-        "max": 10,
-        "ticks": 0.5,
         "label": "Gamble win multiplier",
         "tooltip": "Payout = amount * multiplier",
         "group": "Gamble"
@@ -290,7 +359,7 @@
         "tooltip": "Chance in percent to double the winnings when gambling",
         "group": "Gamble"
     },
-    
+
     "guess.enable": {
         "type": "checkbox",
         "label": "Guess enable",
@@ -327,11 +396,8 @@
         "group": "Guess"
     },
     "guess.cooldown": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 10,
-        "min": 0,
-        "max": 300,
-        "ticks": 5,
         "label": "Guess cooldown",
         "tooltip": "Time a user has to wait before guessing again",
         "group": "Guess"
@@ -358,21 +424,15 @@
         "group": "Guess"
     },
     "guess.max_val": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 20,
-        "min": 0,
-        "max": 100,
-        "ticks": 1,
         "label": "Guess max value",
         "tooltip": "Maximum value that can be rolled when guessing",
         "group": "Guess"
     },
     "guess.win_multiplier": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 5,
-        "min": 0,
-        "max": 10,
-        "ticks": 0.5,
         "label": "Guess win multiplier",
         "tooltip": "Payout = amount * multiplier",
         "group": "Guess"
@@ -414,27 +474,49 @@
         "group": "D20"
     },
     "d20.cooldown": {
-        "type": "slider",
+        "type": "numberbox",
         "value": 10,
-        "min": 0,
-        "max": 300,
-        "ticks": 5,
         "label": "D20 cooldown",
         "tooltip": "Time a user has to wait before rolling the d20 again",
         "group": "D20"
     },
     "d20.text.results": {
         "type": "textbox",
-        "value": "d20 TEXT1\nd20 TEXT2\nd20 TEXT3\nd20 TEXT4\nd20 TEXT5\nd20 TEXT6",
+        "value": "d20 TEXT1;d20 TEXT2;d20 TEXT3;d20 TEXT4;d20 TEXT5;d20 TEXT6",
         "label": "D20 texts",
-        "tooltip": "Texts used for d20 rolls, separate texts by newlines.\n\nAvailable formats are:\n\n\t{user} (mentions the user),\n\n\t{random_user} (mentions a random user)",
-        "group": "Guess"
+        "tooltip": "Texts used for d20 rolls, separate texts by semicolon (;).\n\nAvailable formats are:\n\n\t{user} (mentions the user),\n\n\t{random_user} (mentions a random user)",
+        "group": "D20"
     },
     "d20.text.help": {
         "type": "textbox",
         "value": "Type {d20.command} to roll the d20",
         "label": "Guess help text",
         "tooltip": "D20 help text.\n\rAvailable formats are:\n\r\t{d20.command} (the d20 command)",
-        "group": "Guess"
+        "group": "D20"
+    },
+
+    "btn_default_settings": {
+        "type": "button",
+        "label": "Restore default settings",
+        "tooltip": "Resets the settings to default values.\nReload Scripts afterwards to see the changes in the user interface!",
+        "function": "RestoreDefaultSettings",
+        "wsevent":"",
+        "group": ""
+    },
+    "btn_clear_whitelist": {
+        "type": "button",
+        "label": "Clear whitelist",
+        "tooltip": "Clears the acknowledged list and every user has to acknowledge the disclaimer again",
+        "function": "ClearWhitelist",
+        "wsevent":"",
+        "group": ""
+    },
+    "btn_clear_jackpot": {
+        "type": "button",
+        "label": "Clear jackpot",
+        "tooltip": "Clears the jackpot",
+        "function": "ClearJackpot",
+        "wsevent":"",
+        "group": ""
     }
 }

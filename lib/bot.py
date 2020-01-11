@@ -1,12 +1,13 @@
 """
 Created by Joscha Vack on 1/6/2020.
 """
-import lib.global_variables
-import lib.info
+import time
+
 from lib import info
-from lib.config import save_whitelist
-from lib.formatter import Formatter
 from lib.logger import log_call, log
+from lib.config import save_whitelist, save_jackpot
+from lib.formatter import Formatter
+from lib.live_counter import LiveCounter
 
 
 def _log_command(command):
@@ -29,6 +30,7 @@ class Bot:
         self._parent = parent
         self._config = config
         self._formatter = Formatter(config)
+        self._live_counter = LiveCounter(parent)
 
     """ ----------------
     " Required functions
@@ -53,7 +55,10 @@ class Bot:
             self._process_command(command)
 
     def tick(self):
-        log_call('Bot.tick')
+        self._live_counter.update()
+
+    def shutdown(self):
+        self._update_jackpot(subtract=True)
 
     """ ----------------
     " Core functions
@@ -80,46 +85,49 @@ class Bot:
             user_name = command.UserName
             if 1 < command.GetParamCount():
                 kw = command.GetParam(1)
-                if self._config['core.disclaimer.enable']:  # check disclaimer commands
-                    if kw == self._config['core.disclaimer.keyword']:
+                if self._config['disclaimer.enable']:  # check disclaimer commands
+                    if kw == self._config['disclaimer.keyword']:
                         if 2 == command.GetParamCount():
-                            if self._config['core.disclaimer.via_whisper'] and not command.IsWhisper():
-                                self._respond(command, self._formatter.format('core.text.disclaimer_via_whisper',
-                                                                              user=user_name), target='chat')
+                            if self._config['disclaimer.via_whisper'] and not command.IsWhisper():
+                                self._respond(command, self._formatter.format('disclaimer.text.via_whisper',
+                                                                              user=user_name), target='whisper')
                             else:
-                                self._respond(command, self._formatter.format('core.text.disclaimer'),
-                                              target='whisper' if self._config['core.disclaimer.via_whisper'] else '')
+                                self._respond(command, self._formatter.format('disclaimer.text.disclaimer'),
+                                              target='whisper' if self._config['disclaimer.via_whisper'] else '')
                         else:
                             # malformed command
                             self._respond(command,
                                           self._formatter.format('core.text.malformed_command', user=user_name))
                             return
-                    elif kw == self._config['core.acknowledge.keyword']:
+                    elif kw == self._config['disclaimer.acknowledge_keyword']:
                         if 2 == command.GetParamCount():
-                            if self._config['core.disclaimer.via_whisper'] and not command.IsWhisper():
-                                self._respond(command, self._formatter.format('core.text.disclaimer_via_whisper',
-                                                                              user=user_name), target='chat')
+                            if self._config['disclaimer.via_whisper'] and not command.IsWhisper():
+                                self._respond(command, self._formatter.format('disclaimer.text.via_whisper',
+                                                                              user=user_name), target='whisper')
                             else:
                                 log('info', 'Whitelisted %s (id=%s)' % (user_name, user_id))
-                                self._config['core.acknowledge.whitelist'].append(user_id)
+                                self._config['disclaimer.whitelist'].append(user_id)
                                 save_whitelist(self._config)
-                                self._respond(command, self._formatter.format('core.text.acknowledged', user=user_name),
-                                              target='whisper' if self._config['core.disclaimer.via_whisper'] else '')
+                                self._respond(command, self._formatter.format('disclaimer.text.acknowledged', user=user_name),
+                                              target='whisper' if self._config['disclaimer.via_whisper'] else '')
                         else:
                             # malformed command
                             self._respond(command,
                                           self._formatter.format('core.text.malformed_command', user=user_name))
                         return
-                elif kw == self._config['core.disclaimer.keyword'] or kw == self._config['core.acknowledge.keyword']:
+                elif kw == self._config['disclaimer.keyword'] or kw == self._config['disclaimer.acknowledge_keyword']:
                     # disclaimer disable
-                    if self._config['core.disclaimer.via_whisper'] and not command.IsWhisper():
-                        self._respond(command, self._formatter.format('core.text.disclaimer_via_whisper',
+                    if self._config['disclaimer.via_whisper'] and not command.IsWhisper():
+                        self._respond(command, self._formatter.format('disclaimer.text.via_whisper',
                                                                       user=user_name), target='chat')
                     else:
-                        self._respond(command, self._formatter.format('core.text.disclaimer_disable', user=user_name),
-                                      target='whisper' if self._config['core.disclaimer.via_whisper'] else '')
+                        self._respond(command, self._formatter.format('disclaimer.text.disable', user=user_name),
+                                      target='whisper' if self._config['disclaimer.via_whisper'] else '')
                     return
-                if kw == self._config['gamble.keyword']:
+                if kw == self._config['jackpot.keyword']:
+                    self._update_jackpot()
+                    self._respond(command, self._formatter.format('jackpot.text.content', currency=self._parent.GetCurrencyName(), user=user_name))
+                elif kw == self._config['gamble.keyword']:
                     if 3 != command.GetParamCount():
                         self._respond(command, self._formatter.format('core.text.malformed_command', user=user_name))
                         return
@@ -155,7 +163,7 @@ class Bot:
                         return
                     if not self._check_access(command, 'd20'):
                         return
-                    self._d20(user_id, user_name)
+                    self._d20(command)
                 else:  # malformed command
                     self._respond(command, self._formatter.format('core.text.malformed_command', user=user_name))
             else:  # unknown command
@@ -276,11 +284,11 @@ class Bot:
 
     def _check_whitelist(self, command, user_id, user_name):
         log_call('Bot._check_whitelist', command=command.Message, user_name=user_name, user_id=user_id)
-        if not self._config['core.disclaimer.enable'] or user_id in self._config['core.acknowledge.whitelist']:
+        if not self._config['disclaimer.enable'] or user_id in self._config['disclaimer.whitelist']:
             return True
         else:
-            self._respond(command, self._formatter.format('core.text.not_acknowledged', user=user_name),
-                          target='whisper' if self._config['core.disclaimer.via_whisper'] else '')
+            self._respond(command, self._formatter.format('disclaimer.text.not_acknowledged', user=user_name),
+                          target='whisper' if self._config['disclaimer.via_whisper'] else '')
             return False
 
     def _get_user_id(self, user_name):
@@ -311,6 +319,37 @@ class Bot:
                 self._respond(command, self._formatter.format('core.text.malformed_command', user=command.UserName))
                 return None
 
+    def _get_jackpot(self):
+        log_call('Bot._get_jackpot')
+        self._update_jackpot()
+        return self._config['jackpot.sum']
+
+    def _add_to_jackpot(self, amount):
+        log_call('Bot._add_to_jackpot', amout=amount)
+        self._config['jackpot.entries'].append((amount, int(self._config['jackpot.decay.total']) + self._live_counter.seconds_live))
+        self._update_jackpot()
+
+    def _clear_jackpot(self):
+        log_call('Bot._clear_jackpot')
+        self._config['jackpot.entries'] = []
+        save_jackpot(self._config)
+
+    def _update_jackpot(self, subtract=False):
+        log_call('Bot._update_jackpot', subtract=subtract)
+        live_time = self._live_counter.seconds_live
+        amount = 0.
+        for i, v, t in reversed([(i, e[0], e[1]) for i, e in enumerate(self._config['jackpot.entries'])]):
+            if t - live_time <= 0:
+                log('debug', 'Removing entry %d from the jackpot (value=%d, time=%d)' % (i, v, t))
+                del self._config['jackpot.entries'][i]
+            else:
+                log('debug', 'Jackpot entry %d: value=%d, time remaining=%d' % (i, v, t - live_time))
+                if subtract:
+                    self._config['jackpot.entries'][i][1] -= live_time
+                amount += v
+        self._config['jackpot.sum'] = int(amount)
+        save_jackpot(self._config)
+
     """ ----------------
     " Minigames
     """
@@ -319,30 +358,42 @@ class Bot:
         log_call('Bot._gamble', command=command.Message, amount=amount)
         roll = self._parent.GetRandom(0, 100)
         add = False
-        if self._config['gamble.triple.enable'] and roll < int(self._config['gamble.triple.chance']):
-            amount *= int(self._config['gamble.win_multiplier']) * 3
-            add = True
-        elif self._config['gamble.double.enable'] and roll < int(self._config['gamble.double.chance']):
-            amount *= int(self._config['gamble.win_multiplier']) * 2
-            add = True
-        elif roll <= int(self._config['gamble.chance']):
-            amount *= int(self._config['gamble.win_multiplier']) * 2
-            add = True
-
-        if add:
-            self._parent.AddPoints(command.User, command.UserName, amount)
+        if roll + 1 == self._config['jackpot.number']:
+            # jackpot
+            jackpot = self._get_jackpot()
+            self._clear_jackpot()
+            log('debug', '%s won the jackpot of %d coins' % (command.UserName, jackpot))
+            self._parent.AddPoints(command.User, command.UserName, jackpot)
+            self._respond(command, self._formatter.format('jackpot.text.win', user=command.UserName, roll=self._config['jackpot.number'], currency=self._parent.GetCurrencyName(), total=self._parent.GetPoints(command.User)))
         else:
-            self._parent.RemovePoints(command.User, command.UserName, amount)
+            if self._config['gamble.triple.enable'] and roll < int(self._config['gamble.triple.chance']):
+                amount *= int(self._config['gamble.win_multiplier']) * 3
+                add = True
+            elif self._config['gamble.double.enable'] and roll < int(self._config['gamble.double.chance']):
+                amount *= int(self._config['gamble.win_multiplier']) * 2
+                add = True
+            elif roll <= int(self._config['gamble.chance']):
+                amount *= int(self._config['gamble.win_multiplier']) * 2
+                add = True
 
-        log('debug', '%s %s %d coins with roll %d' % (command.UserName, 'won' if add else 'lost', amount, roll))
-        self._respond(command, self._formatter.format('gamble.text.' + ('win' if add else 'lose'),
-                                                      roll=100 - roll,
-                                                      user=command.UserName,
-                                                      payout=amount,
-                                                      loss=amount,
-                                                      currency=self._parent.GetCurrencyName(),
-                                                      total=self._parent.GetPoints(command.User)))
-        self._parent.AddUserCooldown(info.script_name, 'gamble', command.User, self._config['gamble.cooldown'])
+            if add:
+                log('debug', '%s won %d coins with roll %d' % (command.UserName, amount, roll))
+                self._parent.AddPoints(command.User, command.UserName, amount)
+            else:
+                log('debug', '%s lost %d coins with roll %d' % (command.UserName, amount, roll))
+                self._parent.RemovePoints(command.User, command.UserName, amount)
+                if self._config['jackpot.enable']:
+                    log('debug', 'Adding %f coins to jackpot' % (amount * float(self._config['jackpot.percentage']) / 100))
+                    self._add_to_jackpot(amount * float(self._config['jackpot.percentage']) / 100)
+
+            self._respond(command, self._formatter.format('gamble.text.' + ('win' if add else 'lose'),
+                                                          roll=100 - roll,
+                                                          user=command.UserName,
+                                                          payout=amount,
+                                                          loss=amount,
+                                                          currency=self._parent.GetCurrencyName(),
+                                                          total=self._parent.GetPoints(command.User)))
+            self._parent.AddUserCooldown(info.script_name, 'gamble', command.User, self._config['gamble.cooldown'])
 
     def _guess(self, command, guess, amount):
         log_call('Bot._guess', command=command.Message, guess=guess, amount=amount)
@@ -360,6 +411,9 @@ class Bot:
         else:
             log('debug', '%s lost %d coins with roll %d (guess was %d)' % (command.UserName, amount, roll, guess))
             self._parent.RemovePoints(command.User, command.UserName, amount)
+            if self._config['jackpot.enable']:
+                log('debug', 'Adding %f coins to jackpot' % (amount * float(self._config['jackpot.percentage']) / 100))
+                self._add_to_jackpot(amount * float(self._config['jackpot.percentage']) / 100)
             self._respond(command, self._formatter.format('guess.text.lose',
                                                           user=command.UserName,
                                                           guess=guess,
@@ -371,14 +425,15 @@ class Bot:
 
     def _d20(self, command):
         log_call('Bot._d20', command=command.Message)
-        texts = self._config['d20.text.results'].replpace('\r').split('\n')
+        texts = self._config['d20.text.results'].split(';')
         if not texts[-1]:
             texts = texts[:-1]
-        res = texts[self._parent.GetRando(0, len(texts))]
-        self._respond(command, self._formatter.format_message(res, user=command.UserName, random_user=self._parent.GetRandomActiveUser()))
+        res = texts[self._parent.GetRandom(0, len(texts))]
+        self._respond(command, self._formatter.format_message(res, user=command.UserName,
+                                                              random_user=self._parent.GetRandomActiveUser()))
         self._parent.AddUserCooldown(info.script_name, 'd20', command.User, self._config['d20.cooldown'])
 
     @property
     def config(self):
-        log_call('Bot.config', trace=True)
+        log_call('Bot.config')
         return self._config
