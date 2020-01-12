@@ -57,7 +57,7 @@ from lib.logger import log_call
 reg = re.compile(r'{(.*?)}')
 
 
-class Formatter:
+class Formatter(object):
     def __init__(self, config):
         log_call('Formatter.__init__')
         self._config = config
@@ -85,3 +85,13 @@ class Formatter:
                 raise KeyError(k)
             text = text[:m.start()] + v + text[m.end():]
         return text % data if data else text
+
+    @property
+    def config(self):
+        log_call('Formatter.config.getter')
+        return self._config
+
+    @config.setter
+    def config(self, config):
+        log_call('Formatter.config.setter')
+        self._config = config
