@@ -46,14 +46,14 @@
             "user_specific",
             "editor"
         ],
-        "label": "Permission",
+        "label": "Global Permission",
         "tooltip": "Who is able to use the bot in general",
         "group": "Core"
     },
     "core.permission.info": {
         "type": "textbox",
         "value": "",
-        "label": "Permission info",
+        "label": "Global permission info",
         "tooltip": "This field should only be filled when using the user_specific permission.\n\rUse user, rank or tier",
         "group": "Core"
     },
