@@ -39,7 +39,7 @@ def remove_files(root, *exclude):
 
 if __name__ == '__main__':
     # dirs to copy
-    base_path = path.join(r'D:\Dev\Python\JGambleSystem')
+    base_path = path.join(r'D:\Dev\Python\MrsRobot')
     dist_path = path.join(base_path, r'dist\JGambleSystem.zip')
     lib_path = path.join(base_path, 'lib')
     overlays_path = path.join(base_path, 'Overlays')
