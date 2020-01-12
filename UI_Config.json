@@ -523,6 +523,14 @@
         "group": "D20"
     },
 
+    "btn_open_readme": {
+        "type": "button",
+        "label": "Open readme",
+        "tooltip": "Opens the readme file",
+        "function": "OpenReadme",
+        "wsevent":"",
+        "group": ""
+    },
     "btn_default_settings": {
         "type": "button",
         "label": "Restore default settings",

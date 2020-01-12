@@ -135,7 +135,7 @@ def ClearWhitelist():
                                                u"Clear whitelist?", 4)
         if ret == 6:  # yes is 6
             global bot
-            bot.config['core.acknowledge.whitelist'] = []
+            bot.config['disclaimer.whitelist'] = []
             save_whitelist(bot.config)
             ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully cleared the whitelist",
                                                    u"Ok!", 0)
@@ -151,9 +151,18 @@ def ClearJackpot():
                                                u"Clear jackpot?", 4)
         if ret == 6:  # yes is 6
             global bot
-            bot.config['core.jackpot.entries'] = []
+            bot.config['jackpot.entries'] = []
+            bot.config['jackpot.sum'] = 0
             save_jackpot(bot.config)
             ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully cleared the jackpot",
                                                    u"Ok!", 0)
+    except:
+        log('error', traceback.format_exc())
+
+
+def OpenReadme():
+    try:
+        log_call('JBetSystem:OpenReadme')
+        os.startfile(global_variables.readme_path)
     except:
         log('error', traceback.format_exc())

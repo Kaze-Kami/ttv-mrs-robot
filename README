@@ -1,0 +1,91 @@
+Created By KanjiuAkuma (https://github.com/KanjiuAkuma)
+
+Available Features (Check settings in streamlabs chatbot for more info):
+    - Prefix
+    - Gamble command
+        - double chance
+        - triple chance
+        - jackpot
+    - Guess command
+    - D20 command
+
+Feature requests: https://github.com/KanjiuAkuma/MrsRobot/issues
+
+Available specifiers for texts:
+     {core.log_level}: Evaluates to Trace, Debug, Info, Error or Warn depending on which log level is set in the core tab. (Not intended for usage)
+     {core.prefix.enable}: Evaluates to True or False depending on whether or not the prefix is enabled (Not intended for usage)
+     {core.prefix.text}: Evaluates to !prefix of ! depending on whether or not the prefix is enabled
+     {core.help.keyword}: Evaluates to the help keyword (eg. help)
+     {core.permission.value}: Evaluates to the value set for global permission in the core tab
+     {core.permission.info}: Evaluates to the contents of the global permission info textfield in the core tab
+     {core.all_keyword}: Evaluates to the keyword used to indicate the user wants to gamble all his currency (eg. all)
+     {core.text.help}: Evaluates to the help text set in the core tab
+     {core.text.no_permission}: Evaluates to the no permission text set in the core tab
+     {core.text.no_command_permission}: Evaluates to the no command permission text set in the core tab
+     {core.text.command_disable}: Evaluates to the command disable text set in the core tab
+     {core.text.malformed_command}: Evaluates to to the malformed command text set in the core tab
+     {core.text.not_enough_currency}: Evaluates to the not enough currency text set in the core tab
+     {core.text.on_cooldown}: Evaluates to the command on cooldown text set in the core tab
+     {core.text.twitch_bug}: Evaluates to the twitch whisper bug text set in the core tab
+
+    # disclaimer settings
+     {disclaimer.enable}: Evaluates to True or False depending on whether or not the disclaimer is enabled (Not intended for usage)
+     {disclaimer.via_whisper}: Evaluates to True or False depending on whether or not the disclaimer via whisper is enabled (Not intended for usage)
+     {disclaimer.keyword}: Evaluates to the disclaimer keyword (eg. disclaimer)
+     {disclaimer.acknowledge_keyword}: Evaluates to the acknowledge keyword (eg. acknowledge)
+     {disclaimer.text.via_whisper}: Evaluates to the disclaimer via whisper text set in the disclaimer tab
+     {disclaimer.text.disable}: Evaluates to the disclaimer disable text set in the disclaimer tab
+     {disclaimer.text.disclaimer}: Evaluates to the disclaimer text set in the disclaimer tab
+     {disclaimer.text.acknowledged}: Evaluates to the disclaimer acknowledged text set in the disclaimer tab
+     {disclaimer.text.not_acknowledged}: Evaluates to the disclaimer not acknowledged text set in the disclaimer tab
+
+    # jackpot settings
+     {jackpot.enable}: Evaluates to True or False depending on whether or not the jackpot is enabled (Not intended for usage)
+     {jackpot.keyword}: Evaluates to the jackpot keyword (eg. jackpot)
+     {jackpot.number}: Evaluates to the jackpot number (eg. 100)
+     {jackpot.percentage}: Evaluates to the percentage of loss entered into jackpot without %-sign
+     {jackpot.decay.enable}: Evaluates to True or False depending on whether or not jackpot decay is enabled (Not intended for usage)
+     {jackpot.decay.seconds}: Evaluates to the jackpot decay time seconds set in the jackpot tab
+     {jackpot.decay.hours}: Evaluates to the jackpot decay time minutes set in the jackpot tab
+     {jackpot.decay.minutes}: Evaluates to the jackpot decay time hours set in the jackpot tab
+     {jackpot.text.content}: Evaluates to the jackpot content text set in the jackpot tab
+     {jackpot.text.win}: Evaluates to the jackpot win text set in the jackpot tab
+     {jackpot.text.help}: Evaluates to the jackpot help text set in the jackpot tab
+
+    # gamble settings
+     {gamble.enable}: Evaluates to True or False depending on whether or not gamble is enabled (Not intended for usage)
+     {gamble.keyword}: Evaluates to the gamble keyword (eg. gamble)
+     {gamble.permission.value}: Evaluates to the value set for gamble permission in the gamble tab
+     {gamble.permission.info}: Evaluates to the contents of the gamble permission info textfield in the gamble tab
+     {gamble.cooldown}: Evaluates to the gamble cooldown in seconds
+     {gamble.text.win}: Evaluates to the gamble win text set in the gamble tab
+     {gamble.text.lose}: Evaluates to the gamble lose text set in the gamble tab
+     {gamble.text.help}: Evaluates to the gamble help text set in the gamble tab
+     {gamble.chance}: Evaluates to the gamble chance in percent without %-sign
+     {gamble.win_multiplier}: Evaluates to the gamble win multiplier set in the gamble tab
+     {gamble.double.enable}: Evaluates to True or False depending on whether or not double chance is enabled (Not intended for usage)
+     {gamble.double.chance}: Evaluates to the gamble double chance in percent without %-sign
+     {gamble.triple.enable}: Evaluates to True or False depending on whether or not triple chance is enabled (Not intended for usage)
+     {gamble.triple.chance}: Evaluates to the gamble triple chance in percent without %-sign
+
+    # guess settings
+     {guess.enable}: Evaluates to True or False depending on whether or not guess is enabled (Not intended for usage)
+     {guess.keyword}: Evaluates to the guess keyword (eg. guess)
+     {guess.permission.value}: Evaluates to the value set for guess permission in the guess tab
+     {guess.permission.info}: Evaluates to the contents of the guess permission info textfield in the guess tab
+     {guess.cooldown}: Evaluates to the guess cooldown in seconds
+     {guess.text.win}: Evaluates to the guess win text set in the guess tab
+     {guess.text.lose}: Evaluates to the guess lose text set in the guess tab
+     {guess.text.help}: Evaluates to the guess help text set in the guess tab
+     {guess.text.not_in_range}: Evaluates to the guess not in range text set in the guess tab
+     {guess.max_val}: Evaluates to the guess max value set in the guess tab
+     {guess.win_multiplier}: Evaluates to the guess win multiplier set in the guess tab
+
+    # d20 settings
+     {d20.enable}: Evaluates to True or False depending on whether or not d20 is enabled (Not intended for usage)
+     {d20.keyword}: Evaluates to the d20 keyword (eg. d20)
+     {d20.permission.value}: Evaluates to the value set for d20 permission in the d20 tab
+     {d20.permission.info}: Evaluates to the contents of the d20 permission info textfield in the d20 tab
+     {d20.cooldown}: Evaluates to the d20 cooldown in seconds
+     {d20.text.results}: Evaluates to the contents of the d20 texts textfield in the d20 tab
+     {d20.text.help}: Evaluates to the d20 help text set in the d20 tab
