@@ -15,11 +15,25 @@
         "tooltip": "Which logs should be shown in the logs tab?",
         "group": "Core"
     },
-    "core.prefix": {
+    "core.prefix.enable": {
+        "type": "checkbox",
+        "label": "Prefix enable",
+        "value": true,
+        "tooltip": "Whether or not commands use a prefix (like a bot name: !lucky gamble or !gamble)",
+        "group": "Core"
+    },
+    "core.prefix.text": {
         "type": "textbox",
-        "value": "!lucky",
+        "value": "MrsRobot",
         "label": "Prefix",
-        "tooltip": "The bot prefix",
+        "tooltip": "The bot prefix (All commands have to start with a ! so a command would look like !yourprefix gamble)",
+        "group": "Core"
+    },
+    "core.help.keyword": {
+        "type": "textbox",
+        "value": "help",
+        "label": "Help keyword",
+        "tooltip": "The help keyword",
         "group": "Core"
     },
     "core.permission.value": {
@@ -244,6 +258,13 @@
         "tooltip": "Text displayed when a user wins the jackpot.\n\nAvailable formats are:\n\n\t{user} (mentions the user),\n\n\t{roll} (the users roll),\n\n\t{jackpot.sum} (coins in the jackpot),\n\n\t{currency} (the currency name),\n\n\t{total} (users total coins)",
         "group": "Jackpot"
     },
+    "jackpot.text.help": {
+        "type": "textbox",
+        "value": "Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling.",
+        "label": "Jackpot help text",
+        "tooltip": "Jackpot help text.\n\nAvailable formats are:\n\n\t{jackpot.command} (jackpot command),\n\n\t{jackpot.number} (Number to win jackpot)",
+        "group": "Jackpot"
+    },
 
     "gamble.enable": {
         "type": "checkbox",
@@ -404,14 +425,14 @@
     },
     "guess.text.win": {
         "type": "textbox",
-        "value": "{user}'s guess ({guess}) was right! He wins {payout} and has {total} {currency} now.",
+        "value": "{user}'s guess ({guess}) was right! He wins {payout} {currency} and has {total} {currency} now.",
         "label": "Guess win text",
         "tooltip": "Text shown when a user guesses right.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{guess} (the guessed number),\n\r\t{payout} (the winnings)\n\r\t{total} (users total currency)\n\r\t{currency} (currency name)",
         "group": "Guess"
     },
     "guess.text.lose": {
         "type": "textbox",
-        "value": "{user}'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.",
+        "value": "{user}'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} {currency} and has {total} {currency} now.",
         "label": "Guess lose text",
         "tooltip": "Text shown when a user guesses wrong.\n\rAvailable formats are:\n\r\t{user} (mentions the user),\n\r\t{guess} (the guessed number),\n\r\t{roll} (the rolled number)\n\r\t{loss} (the loss)\n\r\t{total} (users total currency)\n\r\t{currency} (currency name)",
         "group": "Guess"
@@ -435,6 +456,13 @@
         "value": 5,
         "label": "Guess win multiplier",
         "tooltip": "Payout = amount * multiplier",
+        "group": "Guess"
+    },
+    "guess.text.not_in_range": {
+        "type": "textbox",
+        "value": "{guess} is not a valid guess, {user}. It must be between 0 and {guess.max_val}.",
+        "label": "Guess not in range text",
+        "tooltip": "Text displayed if a user attempts to guess out of the guess range.\n\rAvailable formats are:\n\r\t{guess} (users guess),\n\n\t{user} (mentions the user),\n\r\t{guess.max_val} (the maximum possible number)",
         "group": "Guess"
     },
 
