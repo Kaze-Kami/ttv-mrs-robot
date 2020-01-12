@@ -212,9 +212,9 @@ def save_config(config):
 
 
 def save_whitelist(config):
-    whitelist = config['core.acknowledge.whitelist']
+    whitelist = config['disclaimer.whitelist']
     try:
-        _write_json(global_variables.whitelist_path, {'core.acknowledge.whitelist': whitelist})
+        _write_json(global_variables.whitelist_path, {'disclaimer.whitelist': whitelist})
     except Exception as e:
         log('error', 'Failed to whitelist to file %s: %s' % (global_variables.whitelist_path, repr(e)))
 
