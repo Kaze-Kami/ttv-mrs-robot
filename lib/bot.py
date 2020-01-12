@@ -399,7 +399,7 @@ class Bot(object):
         log_call('Bot._gamble', command=command, amount=amount)
         roll = self._parent.GetRandom(0, 100)
         add = False
-        if roll + 1 == self._config['jackpot.number', int]:
+        if roll + 1 == self._config['jackpot.number', int] and self._config['jackpot.enable', bool]:
             # jackpot
             jackpot = self._get_jackpot()
             self._clear_jackpot()
@@ -433,7 +433,7 @@ class Bot(object):
                                                           payout=amount, loss=amount,
                                                           currency=self._parent.GetCurrencyName(),
                                                           total=self._parent.GetPoints(command.user_id)))
-            self._parent.AddUserCooldown(info.script_name, 'gamble', command.user_id, self._config['gamble.cooldown', int])
+        self._parent.AddUserCooldown(info.script_name, 'gamble', command.user_id, self._config['gamble.cooldown', int])
 
     # noinspection Duplicates
     def _guess(self, command, guess, amount):
