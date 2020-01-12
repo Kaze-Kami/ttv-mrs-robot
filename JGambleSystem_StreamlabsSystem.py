@@ -13,7 +13,7 @@ from lib import global_variables
 from lib import logger
 
 from lib.logger import log_call, log, log_levels
-from lib.config import load_config, save_config, default_config, save_whitelist, save_jackpot
+from lib.config import load_config, save_config, save_whitelist, save_jackpot
 from lib.bot import Bot
 
 clr.AddReference("IronPython.SQLite.dll")
@@ -53,13 +53,13 @@ def Init():
 
 
 def Execute(data):
-    if data.Message:
-        try:
+    try:
+        if data.Message and not data.IsRawData():
             log_call('JBetSystem:Execute', data=data.Message)
             global bot
             bot.process(data)
-        except:
-            log('error', traceback.format_exc())
+    except:
+        log('error', traceback.format_exc())
 
 
 def Tick():
@@ -83,8 +83,10 @@ def ReloadSettings(jsondata):
     try:
         log_call('JBetSystem:ReloadSettings')
         global bot
-        bot.config = load_config(jsondata)
-        save_config(bot.config)
+        config = load_config(jsondata)
+        logger.log_level = log_levels[config['core.log_level'].lower()]
+        bot.config = config
+        save_config(config)
     except:
         log('error', traceback.format_exc())
 
@@ -117,7 +119,7 @@ def RestoreDefaultSettings():
                                                u"Reset settings file?", 4)
         if ret == 6:  # yes is 6
             global bot
-            bot.config = default_config()
+            bot.config = load_config(default=True)
             save_config(bot.config)
             ret = ctypes.windll.user32.MessageBoxW(0, u"Successfully restored to default values",
                                                    u"Ok!", 0)
