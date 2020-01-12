@@ -12,7 +12,7 @@ from lib import info
 from lib import global_variables
 from lib import logger
 
-from lib.logger import log_call, log, log_levels
+from lib.logger import log_call, log, log_levels, make_log_file
 from lib.config import load_config, save_config, save_whitelist, save_jackpot
 from lib.bot import Bot
 
@@ -34,10 +34,8 @@ bot = None
 def Init():
     try:
         global_variables.parent = Parent
-        # clear log file
-        with open(global_variables.log_file_path, 'w'):
-            pass
-
+        # set up log file
+        make_log_file()
         log_call('JBetSystem:Init')
         # for debugging purposes: log available methods from Parent object
         # for method_name in dir(Parent):

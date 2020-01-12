@@ -1,6 +1,11 @@
 """
 Created by Joscha Vack on 1/7/2020.
 """
+
+import os
+from os import path
+from datetime import date
+
 from lib import global_variables
 from lib import info
 
@@ -13,7 +18,17 @@ log_levels = {
     'none': 5
 }
 
-log_level = log_levels['error']
+log_level = log_levels['info']
+
+
+def make_log_file():
+    # check log dir
+    if not path.exists(global_variables.log_dir):
+        os.mkdir(global_variables.log_dir)
+
+    # set log file
+    global_variables.log_file_path = path.join(global_variables.log_dir, date.today().isoformat() + '.log')
+    log('info', 'Log file: ' + str(global_variables.log_file_path))
 
 
 def log_call(fun, level_trace=True, **kwargs):
