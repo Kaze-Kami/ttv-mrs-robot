@@ -305,7 +305,7 @@
         "type": "numberbox",
         "value": 10,
         "label": "Gamble cooldown",
-        "tooltip": "Time a user has to wait before gambling again",
+        "tooltip": "Seconds a user has to wait before gambling again",
         "group": "Gamble"
     },
     "gamble.text.win": {
@@ -420,7 +420,7 @@
         "type": "numberbox",
         "value": 10,
         "label": "Guess cooldown",
-        "tooltip": "Time a user has to wait before guessing again",
+        "tooltip": "Seconds a user has to wait before guessing again",
         "group": "Guess"
     },
     "guess.text.win": {
@@ -505,7 +505,7 @@
         "type": "numberbox",
         "value": 10,
         "label": "D20 cooldown",
-        "tooltip": "Time a user has to wait before rolling the d20 again",
+        "tooltip": "Seconds a user has to wait before rolling the d20 again",
         "group": "D20"
     },
     "d20.text.results": {
