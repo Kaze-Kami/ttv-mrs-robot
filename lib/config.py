@@ -45,12 +45,13 @@ def _default_config_data():
         """
     data = {
         'core.log_level': 'info',
-        'core.prefix': '!lucky',
+        'core.prefix.enable': True,
+        'core.prefix.text': 'MrsRobot',
+        'core.help.keyword': 'help',
         'core.permission.value': 'everyone',
         'core.permission.info': '',
         'core.all_keyword': 'all',
-        'core.text.help': 'Available commands: {gamble.command}, {guess.command}, {d20.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {core.disclaimer.command}.',
-        'core.text.no_permission': 'You have no permission to use the commands, {user}.',
+        'core.text.help': 'Available commands: {gamble.command}, {guess.command}, {d20.command}, {jackpot.command}. For more information on a command type {core.help.command} [keyword]. To view the disclaimer type {disclaimer.command}.',        'core.text.no_permission': 'You have no permission to use the commands, {user}.',
         'core.text.no_command_permission': 'You have no permission to use the {keyword} command, {user}.',
         'core.text.command_disable': '{keyword} is currently disabled, {user}.',
         'core.text.malformed_command': 'I did not get that. Type {core.help.command} for help and try again.',
@@ -80,6 +81,7 @@ def _default_config_data():
         'jackpot.decay.minutes': 0,
         'jackpot.text.content': 'The jackpot currently contains {jackpot.sum} {currency}, {user}',
         'jackpot.text.win': '{user} rolled {roll} and won the jackpot ({jackpot.sum} {currency})! He has {total} {currency} now.',
+        'jackpot.text.help': 'Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling.',
 
         # gamble settings
         'gamble.enable': True,
@@ -103,9 +105,10 @@ def _default_config_data():
         'guess.permission.value': 'everyone',
         'guess.permission.info': '',
         'guess.cooldown': 10,
-        'guess.text.win': '{user}\'s guess ({guess}) was right! He wins {payout} and has {total} {currency} now.',
-        'guess.text.lose': '{user}\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} and has {total} {currency} now.',
+        'guess.text.win': '{user}\'s guess ({guess}) was right! He wins {payout} {currency} and has {total} {currency} now.',
+        'guess.text.lose': '{user}\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} {currency} and has {total} {currency} now.',
         'guess.text.help': 'Type {guess.command} [guess] [amount] to guess. [guess] must be between 0 and {guess.max_val}',
+        'guess.text.not_in_range': '{guess} is not a valid guess. It must be between 0 and {guess.max_val}, {user}',
         'guess.max_val': 20,
         'guess.win_multiplier': 5,
 
@@ -121,39 +124,35 @@ def _default_config_data():
     return data
 
 
-def load_config(jsondata=None):
-    log_call('config:load_config', jsondata=jsondata if jsondata else 'No')
-    # read extra first so we can overwrite keys if needed
-    try:
-        raw_data = _read_json(global_variables.settings_extra_path)
-    except Exception as e:
-        log('error', 'Can not load config extra file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
-        raw_data = {}
+def load_config(jsondata=None, default=False):
+    log_call('config:load_config', jsondata='Yes' if jsondata else 'No')
 
     # read whitelist
     try:
-        raw_data.update(_read_json(global_variables.whitelist_path))
+        raw_data = _read_json(global_variables.whitelist_path)
     except Exception as e:
-        log('error', 'Can not load whitelist file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
-        raw_data['disclaimer.whitelist'] = []
+        log('error', 'Can not load whitelist file from %s: %s' % (global_variables.whitelist_path, repr(e)))
+        raw_data = {'disclaimer.whitelist': []}
 
     # read jackpot
     try:
-        jackpot_info = _read_json(global_variables.jackpot_info_path)
+        jackpot_info = _read_json(global_variables.jackpot_path)
         raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
-                                                                   jackpot_info['jackpot.times'])]
+                                                                          jackpot_info['jackpot.times'])]
         total = 0
         for v, t in raw_data['jackpot.entries']:
             total += v
         raw_data['jackpot.sum'] = int(total)
     except Exception as e:
-        log('error', 'Can not load jackpot info file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
+        log('error', 'Can not load jackpot info file from %s: %s' % (global_variables.jackpot_path, repr(e)))
         raw_data['jackpot.entries'] = []
         raw_data['jackpot.sum'] = 0
 
     # read config
     if jsondata:
         raw_data.update(json.loads(jsondata, encoding="utf-8"))
+    elif default:
+        raw_data.update(_default_config_data())
     else:
         try:
             raw_data.update(_read_json(global_variables.settings_path))
@@ -162,7 +161,19 @@ def load_config(jsondata=None):
                 global_variables.settings_path, repr(e)))
             raw_data.update(_default_config_data())
 
-    raw_data['jackpot.decay.total'] = int(int(raw_data['jackpot.decay.seconds']) + int(raw_data['jackpot.decay.minutes']) * 60 + int(raw_data['jackpot.decay.hours']) * 24 * 60)
+    raw_data['jackpot.decay.total'] = int(
+        int(raw_data['jackpot.decay.seconds']) + int(raw_data['jackpot.decay.minutes']) * 60 + int(
+            raw_data['jackpot.decay.hours']) * 24 * 60)
+
+    # append extra
+    raw_data['core.prefix.value'] = ('!' + raw_data['core.prefix.text'] + ' ') if bool(raw_data['core.prefix.enable']) else '!'
+    raw_data['core.help.command'] = '{core.prefix.value}{core.help.keyword}'
+    raw_data['disclaimer.acknowledge_command'] = '{core.prefix.value}{disclaimer.acknowledge_keyword}'
+    raw_data['disclaimer.command'] = '{core.prefix.value}{disclaimer.keyword}'
+    raw_data['jackpot.command'] = '{core.prefix.value}{jackpot.keyword}'
+    raw_data['gamble.command'] = '{core.prefix.value}{gamble.keyword}'
+    raw_data['guess.command'] = '{core.prefix.value}{guess.keyword}'
+    raw_data['d20.command'] = '{core.prefix.value}{d20.keyword}'
 
     parsed_data = _parse_config(raw_data)
     config = Config(parsed_data)
@@ -175,42 +186,28 @@ def save_config(config):
     data = _flatten_dict(config.data)
 
     # save and remove whitelist
-    del data['core.acknowledge.whitelist']
+    del data['disclaimer.whitelist']
 
     # save and remove jackpot
-    del data['core.jackpot.entries']
-    del data['core.jackpot.sum']
+    del data['jackpot.entries']
+    del data['jackpot.sum']
     del data['jackpot.decay.total']
 
-    # remove extras
-    try:
-        extra = _read_json(global_variables.settings_extra_path)
-
-        for k in extra:
-            del data[k]
-    except Exception as e:
-        log('error', 'Can not load config extra file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
+    # remove extra
+    del data['core.prefix.value']
+    del data['core.help.command']
+    del data['disclaimer.acknowledge_command']
+    del data['disclaimer.command']
+    del data['jackpot.command']
+    del data['gamble.command']
+    del data['guess.command']
+    del data['d20.command']
 
     try:
         # save config
         _write_json(global_variables.settings_path, data, js=True)
     except Exception as e:
         log('error', 'Failed to save config: %s' % repr(e))
-
-
-def default_config():
-    log_call('config:default_config')
-    try:
-        raw_data = _read_json(global_variables.settings_extra_path)
-    except Exception as e:
-        log('error', 'Can not load config extra file from %s: %s' % (global_variables.settings_extra_path, repr(e)))
-        raw_data = {}
-    raw_data.update(_default_config_data())
-
-    parsed_data = _parse_config(raw_data)
-    config = Config(parsed_data)
-    log('debug', 'Config:\n' + _format_dict(config.data, ind='  ', ind_inc='  '))
-    return config
 
 
 def save_whitelist(config):
@@ -230,9 +227,9 @@ def save_jackpot(config):
         jackpot_data['jackpot.values'].append(e[0])
         jackpot_data['jackpot.times'].append(e[1])
     try:
-        _write_json(global_variables.jackpot_info_path, jackpot_data)
+        _write_json(global_variables.jackpot_path, jackpot_data)
     except Exception as e:
-        log('error', 'Failed to jackpot to file %s: %s' % (global_variables.jackpot_info_path, repr(e)))
+        log('error', 'Failed to jackpot to file %s: %s' % (global_variables.jackpot_path, repr(e)))
 
 
 def _flatten_dict(d, parent_key='', sep='.'):
@@ -256,22 +253,22 @@ def _recursive_to_dict(d):
 def _format_dict(d, ind='', ind_inc=''):
     return '\n'.join(['%s%s: %s' % (
         ind, k, str(v) if '\n' not in str(v) else ('\n' + ind + ind_inc).join(('\n' + v).replace('\r', '').split('\n')))
-        if not isinstance(v, collections.MutableMapping)
-        else ind + k + '\n' + _format_dict(v, ind + ind_inc, ind_inc) for k, v in d.items()])
+                      if not isinstance(v, collections.MutableMapping)
+                      else ind + k + '\n' + _format_dict(v, ind + ind_inc, ind_inc) for k, v in d.items()])
 
 
-class Config:
+class Config(object):
     def __init__(self, data_dict):
         log_call('Config.__init__')
         self._data_dict = data_dict
 
-    @property
-    def data(self):
-        log_call('Config.data')
-        return self._data_dict
-
-    def __getitem__(self, key):
-        log_call('Config.__getitem__', key=key)
+    def __getitem__(self, args):
+        log_call('Config.__getitem__', args=args)
+        try:
+            key, fmt = args
+        except:
+            key = args
+            fmt = None
         """
         returns item of arbitrary depth from the data dict
         eg. a.b.c -> self._data[a][b][c]
@@ -282,9 +279,10 @@ class Config:
         val = self._data_dict
         for i in indices:
             val = val[i]
-        return val
+        return fmt(val) if fmt else val
 
     def __setitem__(self, key, value):
+        log_call('Config.__setitem__', key=key, value=value)
         indices = key.split('.')
         val = self._data_dict
         for i in indices[:-1]:
@@ -301,3 +299,8 @@ class Config:
             else:
                 return False
         return True
+
+    @property
+    def data(self):
+        log_call('Config.data.getter')
+        return self._data_dict
