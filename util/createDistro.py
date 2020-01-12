@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     with ZipFile(path.join(dist_path), mode='w') as zf:
         for dr in listdir(base_path):
-            if dr not in ['.idea', 'util', 'dist', 'LICENSE', '.gitignore', '.git']:
+            if dr not in ['.idea', 'util', 'dist', '.gitignore', '.git']:
                 if path.isdir(path.join(base_path, dr)):
                     fl = file_paths(path.join(base_path, dr))
                     for f in fl:
