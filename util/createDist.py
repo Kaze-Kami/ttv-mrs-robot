@@ -40,16 +40,16 @@ def remove_files(root, *exclude):
 if __name__ == '__main__':
     # dirs to copy
     base_path = path.join(r'D:\Dev\Python\MrsRobot')
-    dist_path = path.join(base_path, r'dist\JGambleSystem.zip')
+    dist_path = path.join(base_path, r'dist\MrsRobot.zip')
     lib_path = path.join(base_path, 'lib')
     overlays_path = path.join(base_path, 'Overlays')
     resource_path = path.join(base_path, 'resources')
 
     # zip root folder
-    zip_root = path.join('JGambleSystem')
+    zip_root = path.join('MrsRobot')
 
     # streamlabs scripts dir
-    scripts_path = path.join(r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\JGambleSystem')
+    scripts_path = path.join(r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\MrsRobot')
     if not path.exists(scripts_path):
         mkdir(scripts_path)
     remove_files(scripts_path, 'log.log')
@@ -68,14 +68,14 @@ if __name__ == '__main__':
         mkdir(path.join(scripts_path, 'resources'))
 
     with ZipFile(path.join(dist_path), mode='w') as zf:
-        for dr in listdir(base_path):
-            if dr not in ['.idea', 'util', 'dist', '.gitignore', '.git']:
-                if path.isdir(path.join(base_path, dr)):
-                    fl = file_paths(path.join(base_path, dr))
+        for p in listdir(base_path):
+            if p not in ['.idea', 'util', 'dist', '.gitignore', '.git']:
+                if path.isdir(path.join(base_path, p)):
+                    fl = file_paths(path.join(base_path, p))
                     for f in fl:
-                        zf.write(path.join(base_path, dr, f), path.join(dr, f))
-                        copy(path.join(base_path, dr, f), path.join(scripts_path, dr, f))
+                        zf.write(path.join(base_path, p, f), path.join(zip_root, p, f))
+                        copy(path.join(base_path, p, f), path.join(scripts_path, p, f))
                 else:
-                    zf.write(path.join(base_path, dr), dr)
-                    copy(path.join(base_path, dr), path.join(scripts_path, dr))
+                    zf.write(path.join(base_path, p), path.join(zip_root, p))
+                    copy(path.join(base_path, p), path.join(scripts_path, p))
 
