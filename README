@@ -12,6 +12,7 @@ Available Features (Check settings in streamlabs chatbot for more info):
 Feature requests: https://github.com/KanjiuAkuma/MrsRobot/issues
 
 Available specifiers for texts:
+    # core settings
      {core.log_level}: Evaluates to Trace, Debug, Info, Error or Warn depending on which log level is set in the core tab. (Not intended for usage)
      {core.prefix.enable}: Evaluates to True or False depending on whether or not the prefix is enabled (Not intended for usage)
      {core.prefix.text}: Evaluates to !prefix of ! depending on whether or not the prefix is enabled
@@ -89,3 +90,13 @@ Available specifiers for texts:
      {d20.cooldown}: Evaluates to the d20 cooldown in seconds
      {d20.text.results}: Evaluates to the contents of the d20 texts textfield in the d20 tab
      {d20.text.help}: Evaluates to the d20 help text set in the d20 tab
+
+    # additional texts (computed at runtime)
+     {core.prefix.value}: Evaluates to ! or !prefix depending on whether the bot prefix is enable
+     {core.help.command}: Evaluates to the full help command (Either {core.prefix.text} {core.help.keyword} or !{core.help.keyword})
+     {disclaimer.acknowledge_command}: Evaluates to the full acknowledge command (Either !{core.prefix.text} {disclaimer.acknowledge_keyword} or !{disclaimer.acknowledge_keyword})
+     {disclaimer.command}: Evaluates to the full disclaimer command (Either !{core.prefix.text} {disclaimer.keyword} or !{disclaimer.keyword})
+     {jackpot.command}: Evaluates to the full jackpot command (Either !{core.prefix.text} {jackpot.keyword} or !{jackpot.keyword})
+     {gamble.command}: Evaluates to the full gamble command (Either !{core.prefix.text} {gamble.keyword} or !{gamble.keyword})
+     {guess.command}: Evaluates to the full guess command (Either !{core.prefix.text} {guess.keyword} or !{guess.keyword})
+     {d20.command}: Evaluates to the full jackpot command (Either !{core.prefix.text} {d20.keyword} or !{d20.keyword})
