@@ -12,7 +12,8 @@ from lib import info, global_variables, logger
 
 from lib.bot import Bot
 from lib.logger import log_call, log, log_levels, make_log_file
-from lib.config import load_config, save_config, save_whitelist, save_jackpot, backup_file, restore_file, exists_backup
+from lib.config import load_config, save_config, save_whitelist, save_jackpot
+from lib.file_io import backup_file, restore_file, exists_backup
 
 clr.AddReference("IronPython.SQLite.dll")
 clr.AddReference("IronPython.Modules.dll")

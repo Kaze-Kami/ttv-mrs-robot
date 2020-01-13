@@ -2,29 +2,13 @@
 Created by Joscha Vack on 1/6/2020.
 """
 
-import codecs
 import json
 import collections
 import os
-import shutil
 
 from lib import global_variables
 from lib.logger import log_call, log
-
-
-def _write_json(path, data, js=False):
-    log_call('config:_write_json')
-    with codecs.open(path, encoding="utf-8-sig", mode="w+") as f:
-        json.dump(data, f, encoding="utf-8", default='')
-    if js:
-        with codecs.open(path.replace("json", "js"), encoding="utf-8-sig", mode="w+") as f:
-            f.write("var settings = {0};".format(json.dumps(data, encoding='utf-8')))
-
-
-def _read_json(path):
-    log_call('config:_read_json')
-    with codecs.open(path, encoding="utf-8-sig", mode="r") as f:
-        return json.load(f, encoding="utf-8")
+from lib.file_io import write_json, read_json
 
 
 def _to_nested_dict(raw_data):
@@ -133,7 +117,7 @@ def load_config(jsondata=None, default=False):
     # read whitelist
     if os.path.exists(global_variables.whitelist_file):
         try:
-            raw_data = _read_json(global_variables.whitelist_file)
+            raw_data = read_json(global_variables.whitelist_file)
         except Exception as e:
             log('error', 'Can not load whitelist file from %s: %s' % (global_variables.whitelist_file, repr(e)))
             raw_data = {'disclaimer.whitelist': []}
@@ -141,14 +125,14 @@ def load_config(jsondata=None, default=False):
         raw_data = {'disclaimer.whitelist': []}
         log('warn', 'Whitelist file not found, creating new one')
         try:
-            _write_json(global_variables.whitelist_file, {'disclaimer.whitelist': []})
+            write_json(global_variables.whitelist_file, {'disclaimer.whitelist': []})
         except Exception as e:
             log('error', 'Failed to save whitelist to file %s: %s' % (global_variables.whitelist_file, repr(e)))
 
     # read jackpot
     if os.path.exists(global_variables.jackpot_file):
         try:
-            jackpot_info = _read_json(global_variables.jackpot_file)
+            jackpot_info = read_json(global_variables.jackpot_file)
             raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
                                                                               jackpot_info['jackpot.times'])]
             total = 0
@@ -164,7 +148,7 @@ def load_config(jsondata=None, default=False):
         raw_data['jackpot.sum'] = 0
         log('warn', 'Jackpot file not found, creating new one')
         try:
-            _write_json(global_variables.jackpot_file, {'jackpot.values': [], 'jackpot.times': []})
+            write_json(global_variables.jackpot_file, {'jackpot.values': [], 'jackpot.times': []})
         except Exception as e:
             log('error', 'Failed to save jackpot to file %s: %s' % (global_variables.jackpot_file, repr(e)))
 
@@ -175,7 +159,7 @@ def load_config(jsondata=None, default=False):
         raw_data.update(_default_config_data())
     elif os.path.exists(global_variables.config_file):
         try:
-            raw_data.update(_read_json(global_variables.config_file))
+            raw_data.update(read_json(global_variables.config_file))
         except Exception as e:
             log('error', 'Can not load config file from %s: %s, falling back to default config' % (global_variables.config_file, repr(e)))
             raw_data.update(_default_config_data())
@@ -183,7 +167,7 @@ def load_config(jsondata=None, default=False):
         raw_data.update(_default_config_data())
         log('warn', 'Config file not found, creating new one')
         try:
-            _write_json(global_variables.config_file, _default_config_data())
+            write_json(global_variables.config_file, _default_config_data())
         except Exception as e:
             log('error', 'Failed to save config file to %s: %s' % (global_variables.config_file, repr(e)))
             raw_data.update(_default_config_data())
@@ -232,7 +216,7 @@ def save_config(config):
 
     try:
         # save config
-        _write_json(global_variables.config_file, data, js=True)
+        write_json(global_variables.config_file, data, js=True)
     except Exception as e:
         log('error', 'Failed to save config: %s' % repr(e))
 
@@ -241,7 +225,7 @@ def save_whitelist(config):
     log_call('config:save_whitelist')
     whitelist = config['disclaimer.whitelist']
     try:
-        _write_json(global_variables.whitelist_file, {'disclaimer.whitelist': whitelist})
+        write_json(global_variables.whitelist_file, {'disclaimer.whitelist': whitelist})
     except Exception as e:
         log('error', 'Failed to save whitelist to file %s: %s' % (global_variables.whitelist_file, repr(e)))
 
@@ -256,26 +240,9 @@ def save_jackpot(config):
         jackpot_data['jackpot.values'].append(e[0])
         jackpot_data['jackpot.times'].append(e[1])
     try:
-        _write_json(global_variables.jackpot_file, jackpot_data)
+        write_json(global_variables.jackpot_file, jackpot_data)
     except Exception as e:
         log('error', 'Failed to save jackpot to file %s: %s' % (global_variables.jackpot_file, repr(e)))
-
-
-def exists_backup(path):
-    log_call('config:exists_backup', path=path)
-    return os.path.exists(path.replace('.json', '_backup.json'))
-
-
-def backup_file(path):
-    log_call('config:backup_file', path=path)
-    backup_path = path.replace('.json', '_backup.json')
-    shutil.copy(path, backup_path)
-
-
-def restore_file(path):
-    log_call('config:restore_file', path=path)
-    backup_path = path.replace('.json', '_backup.json')
-    shutil.copy(backup_path, path)
 
 
 def _flatten_dict(d, parent_key='', sep='.'):
