@@ -523,21 +523,77 @@
         "group": "D20"
     },
 
-    "btn_open_readme": {
+    "btn_backup_all": {
         "type": "button",
-        "label": "Open readme",
-        "tooltip": "Opens the readme file",
-        "function": "OpenReadme",
+        "label": "Backup all",
+        "tooltip": "Backups the current settings, whitelist and jackpot",
+        "function": "BackupAll",
         "wsevent":"",
-        "group": ""
+        "group": "Backup, restore and reset"
     },
-    "btn_default_settings": {
+    "btn_restore_all": {
+        "type": "button",
+        "label": "Restore all",
+        "tooltip": "Restores the last backup for settings, whitelist and jackpot",
+        "function": "RestoreAll",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_backup_config": {
+        "type": "button",
+        "label": "Backup settings",
+        "tooltip": "Backups the current settings",
+        "function": "BackupConfig",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_backup_whitelist": {
+        "type": "button",
+        "label": "Backup whitelist",
+        "tooltip": "Backups the current whitelist",
+        "function": "BackupWhitelist",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_backup_jackpot": {
+        "type": "button",
+        "label": "Backup jackpot",
+        "tooltip": "Backups the current jackpot",
+        "function": "BackupJackpot",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_restore_config": {
+        "type": "button",
+        "label": "Restore settings",
+        "tooltip": "Restores the last settings backup",
+        "function": "RestoreConfig",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_restore_whitelist": {
+        "type": "button",
+        "label": "Restore whitelist",
+        "tooltip": "Restores the last whitelist backup",
+        "function": "RestoreWhitelist",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_restore_jackpot": {
+        "type": "button",
+        "label": "Restore jackpot",
+        "tooltip": "Restores the last jackpot backup",
+        "function": "RestoreJackpot",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+    "btn_default_config": {
         "type": "button",
         "label": "Restore default settings",
-        "tooltip": "Resets the settings to default values.\nReload Scripts afterwards to see the changes in the user interface!",
+        "tooltip": "Restores the default settings",
         "function": "RestoreDefaultSettings",
         "wsevent":"",
-        "group": ""
+        "group": "Backup, restore and reset"
     },
     "btn_clear_whitelist": {
         "type": "button",
@@ -545,13 +601,22 @@
         "tooltip": "Clears the acknowledged list and every user has to acknowledge the disclaimer again",
         "function": "ClearWhitelist",
         "wsevent":"",
-        "group": ""
+        "group": "Backup, restore and reset"
     },
     "btn_clear_jackpot": {
         "type": "button",
         "label": "Clear jackpot",
         "tooltip": "Clears the jackpot",
         "function": "ClearJackpot",
+        "wsevent":"",
+        "group": "Backup, restore and reset"
+    },
+
+    "btn_open_readme": {
+        "type": "button",
+        "label": "Open readme",
+        "tooltip": "Opens the readme file",
+        "function": "OpenReadme",
         "wsevent":"",
         "group": ""
     }

@@ -9,13 +9,12 @@ from os.path import join, dirname
 # ---------------------------
 root_dir = join(dirname(dirname(__file__)))
 resource_dir = join(root_dir, "resources")
-settings_path = join(resource_dir, 'settings.json')
-settings_extra_path = join(resource_dir, 'settings_extra.json')
-whitelist_path = join(resource_dir, 'whitelist.json')
-jackpot_path = join(resource_dir, 'jackpot.json')
+config_file = join(resource_dir, 'settings.json')
+whitelist_file = join(resource_dir, 'whitelist.json')
+jackpot_file = join(resource_dir, 'jackpot.json')
 log_dir = join(resource_dir, 'log')
-log_file_path = None
-readme_path = join(root_dir, 'README')
+log_file = None
+readme_file = join(root_dir, 'README')
 
 # ---------------------------
 #   Parent bot available after Init() is called

@@ -5,6 +5,8 @@ Created by Joscha Vack on 1/6/2020.
 import codecs
 import json
 import collections
+import os
+import shutil
 
 from lib import global_variables
 from lib.logger import log_call, log
@@ -25,7 +27,7 @@ def _read_json(path):
         return json.load(f, encoding="utf-8")
 
 
-def _parse_config(raw_data):
+def _to_nested_dict(raw_data):
     log_call('config:_parse_json')
     parsed_data = collections.defaultdict(lambda: collections.defaultdict(collections.defaultdict))
     for k in raw_data:
@@ -129,42 +131,66 @@ def load_config(jsondata=None, default=False):
     log_call('config:load_config', jsondata='Yes' if jsondata else 'No')
 
     # read whitelist
-    try:
-        raw_data = _read_json(global_variables.whitelist_path)
-    except Exception as e:
-        log('error', 'Can not load whitelist file from %s: %s' % (global_variables.whitelist_path, repr(e)))
+    if os.path.exists(global_variables.whitelist_file):
+        try:
+            raw_data = _read_json(global_variables.whitelist_file)
+        except Exception as e:
+            log('error', 'Can not load whitelist file from %s: %s' % (global_variables.whitelist_file, repr(e)))
+            raw_data = {'disclaimer.whitelist': []}
+    else:
         raw_data = {'disclaimer.whitelist': []}
+        log('warn', 'Whitelist file not found, creating new one')
+        try:
+            _write_json(global_variables.whitelist_file, {'disclaimer.whitelist': []})
+        except Exception as e:
+            log('error', 'Failed to save whitelist to file %s: %s' % (global_variables.whitelist_file, repr(e)))
 
     # read jackpot
-    try:
-        jackpot_info = _read_json(global_variables.jackpot_path)
-        raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
-                                                                          jackpot_info['jackpot.times'])]
-        total = 0
-        for v, t in raw_data['jackpot.entries']:
-            total += v
-        raw_data['jackpot.sum'] = int(total)
-    except Exception as e:
-        log('error', 'Can not load jackpot info file from %s: %s' % (global_variables.jackpot_path, repr(e)))
+    if os.path.exists(global_variables.jackpot_file):
+        try:
+            jackpot_info = _read_json(global_variables.jackpot_file)
+            raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
+                                                                              jackpot_info['jackpot.times'])]
+            total = 0
+            for v, t in raw_data['jackpot.entries']:
+                total += v
+            raw_data['jackpot.sum'] = int(total)
+        except Exception as e:
+            log('error', 'Can not load jackpot info file from %s: %s' % (global_variables.jackpot_file, repr(e)))
+            raw_data['jackpot.entries'] = []
+            raw_data['jackpot.sum'] = 0
+    else:
         raw_data['jackpot.entries'] = []
         raw_data['jackpot.sum'] = 0
+        log('warn', 'Jackpot file not found, creating new one')
+        try:
+            _write_json(global_variables.jackpot_file, {'jackpot.values': [], 'jackpot.times': []})
+        except Exception as e:
+            log('error', 'Failed to save jackpot to file %s: %s' % (global_variables.jackpot_file, repr(e)))
 
     # read config
     if jsondata:
         raw_data.update(json.loads(jsondata, encoding="utf-8"))
     elif default:
         raw_data.update(_default_config_data())
-    else:
+    elif os.path.exists(global_variables.config_file):
         try:
-            raw_data.update(_read_json(global_variables.settings_path))
+            raw_data.update(_read_json(global_variables.config_file))
         except Exception as e:
-            log('error', 'Can not load config file from %s: %s, falling back to default config' % (
-                global_variables.settings_path, repr(e)))
+            log('error', 'Can not load config file from %s: %s, falling back to default config' % (global_variables.config_file, repr(e)))
+            raw_data.update(_default_config_data())
+    else:
+        raw_data.update(_default_config_data())
+        log('warn', 'Config file not found, creating new one')
+        try:
+            _write_json(global_variables.config_file, _default_config_data())
+        except Exception as e:
+            log('error', 'Failed to save config file to %s: %s' % (global_variables.config_file, repr(e)))
             raw_data.update(_default_config_data())
 
-    raw_data['jackpot.decay.total'] = int(
-        int(raw_data['jackpot.decay.seconds']) + int(raw_data['jackpot.decay.minutes']) * 60 + int(
-            raw_data['jackpot.decay.hours']) * 24 * 60)
+    raw_data['jackpot.decay.total'] = int(int(raw_data['jackpot.decay.seconds'])
+                                          + int(raw_data['jackpot.decay.minutes']) * 60
+                                          + int(raw_data['jackpot.decay.hours']) * 24 * 60)
 
     # append extra
     raw_data['core.prefix.value'] = ('!' + raw_data['core.prefix.text'] + ' ') if bool(raw_data['core.prefix.enable']) else '!'
@@ -176,7 +202,7 @@ def load_config(jsondata=None, default=False):
     raw_data['guess.command'] = '{core.prefix.value}{guess.keyword}'
     raw_data['d20.command'] = '{core.prefix.value}{d20.keyword}'
 
-    parsed_data = _parse_config(raw_data)
+    parsed_data = _to_nested_dict(raw_data)
     config = Config(parsed_data)
     log('debug', 'Config:\n' + _format_dict(config.data, ind='  ', ind_inc='  '))
     return config
@@ -206,20 +232,22 @@ def save_config(config):
 
     try:
         # save config
-        _write_json(global_variables.settings_path, data, js=True)
+        _write_json(global_variables.config_file, data, js=True)
     except Exception as e:
         log('error', 'Failed to save config: %s' % repr(e))
 
 
 def save_whitelist(config):
+    log_call('config:save_whitelist')
     whitelist = config['disclaimer.whitelist']
     try:
-        _write_json(global_variables.whitelist_path, {'disclaimer.whitelist': whitelist})
+        _write_json(global_variables.whitelist_file, {'disclaimer.whitelist': whitelist})
     except Exception as e:
-        log('error', 'Failed to whitelist to file %s: %s' % (global_variables.whitelist_path, repr(e)))
+        log('error', 'Failed to save whitelist to file %s: %s' % (global_variables.whitelist_file, repr(e)))
 
 
 def save_jackpot(config):
+    log_call('config:save_jackpot')
     jackpot_data = {
         'jackpot.values': [],
         'jackpot.times': []
@@ -228,9 +256,26 @@ def save_jackpot(config):
         jackpot_data['jackpot.values'].append(e[0])
         jackpot_data['jackpot.times'].append(e[1])
     try:
-        _write_json(global_variables.jackpot_path, jackpot_data)
+        _write_json(global_variables.jackpot_file, jackpot_data)
     except Exception as e:
-        log('error', 'Failed to jackpot to file %s: %s' % (global_variables.jackpot_path, repr(e)))
+        log('error', 'Failed to save jackpot to file %s: %s' % (global_variables.jackpot_file, repr(e)))
+
+
+def exists_backup(path):
+    log_call('config:exists_backup', path=path)
+    return os.path.exists(path.replace('.json', '_backup.json'))
+
+
+def backup_file(path):
+    log_call('config:backup_file', path=path)
+    backup_path = path.replace('.json', '_backup.json')
+    shutil.copy(path, backup_path)
+
+
+def restore_file(path):
+    log_call('config:restore_file', path=path)
+    backup_path = path.replace('.json', '_backup.json')
+    shutil.copy(backup_path, path)
 
 
 def _flatten_dict(d, parent_key='', sep='.'):

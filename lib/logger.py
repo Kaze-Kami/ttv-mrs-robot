@@ -27,8 +27,8 @@ def make_log_file():
         os.mkdir(global_variables.log_dir)
 
     # set log file
-    global_variables.log_file_path = path.join(global_variables.log_dir, date.today().isoformat() + '.log')
-    log('info', 'Log file: ' + str(global_variables.log_file_path))
+    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '.log')
+    log('info', 'Log file: ' + str(global_variables.log_file))
 
 
 def log_call(fun, level_trace=True, **kwargs):
@@ -45,6 +45,6 @@ def log(level, msg, kind=None):
     if log_level <= log_levels[level]:
         global_variables.parent.Log(info.script_name, msg)
     # log to file
-    with open(global_variables.log_file_path, 'a') as f:
+    with open(global_variables.log_file, 'a') as f:
         f.write(msg)
         f.write('\n')
