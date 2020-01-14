@@ -47,6 +47,7 @@ def make_log_file():
     # reset last log file
     global last_log_file
     last_log_file = 0
+    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-0.log')
     next_log_file()
 
 
