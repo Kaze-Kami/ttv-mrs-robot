@@ -21,6 +21,7 @@ log_levels = {
 log_level = log_levels['info']
 
 
+# todo: prevent large log files as those slow down the bot immensely
 def make_log_file():
     # check log dir
     if not path.exists(global_variables.log_dir):

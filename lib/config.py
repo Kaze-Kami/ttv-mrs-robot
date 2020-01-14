@@ -94,8 +94,8 @@ def _default_config_data():
         'guess.cooldown': 10,
         'guess.text.win': '{user}\'s guess ({guess}) was right! He wins {payout} {currency} and has {total} {currency} now.',
         'guess.text.lose': '{user}\'s guess ({guess}) was wrong, roll was {roll}! He looses {loss} {currency} and has {total} {currency} now.',
-        'guess.text.help': 'Type {guess.command} [guess] [amount] to guess. [guess] must be between 0 and {guess.max_val}',
-        'guess.text.not_in_range': '{guess} is not a valid guess. It must be between 0 and {guess.max_val}, {user}',
+        'guess.text.help': 'Type {guess.command} [guess] [amount] to guess. [guess] must be between 1 and {guess.max_val}',
+        'guess.text.not_in_range': '{guess} is not a valid guess. It must be between 1 and {guess.max_val}, {user}',
         'guess.max_val': 20,
         'guess.win_multiplier': 5,
 

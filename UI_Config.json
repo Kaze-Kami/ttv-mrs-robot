@@ -439,7 +439,7 @@
     },
     "guess.text.help": {
         "type": "textbox",
-        "value": "Type {guess.command} [guess] [amount] to guess. [guess] must be between 0 and {guess.max_val}",
+        "value": "Type {guess.command} [guess] [amount] to guess. [guess] must be between 1 and {guess.max_val}",
         "label": "Guess help text",
         "tooltip": "Guess help text.\n\rAvailable formats are:\n\r\t{guess.command} (guess command),\n\r\t{guess.max_val} (the maximum possible number)",
         "group": "Guess"
@@ -460,7 +460,7 @@
     },
     "guess.text.not_in_range": {
         "type": "textbox",
-        "value": "{guess} is not a valid guess, {user}. It must be between 0 and {guess.max_val}.",
+        "value": "{guess} is not a valid guess, {user}. It must be between 1 and {guess.max_val}.",
         "label": "Guess not in range text",
         "tooltip": "Text displayed if a user attempts to guess out of the guess range.\n\rAvailable formats are:\n\r\t{guess} (users guess),\n\n\t{user} (mentions the user),\n\r\t{guess.max_val} (the maximum possible number)",
         "group": "Guess"

@@ -31,14 +31,14 @@ class Bot(object):
     """
 
     def process(self, data):
-        log_call('Bot.process', command=data.Message)
+        log_call('Bot.process', message=data.Message, params=[data.GetParam(i) for i in range(data.GetParamCount())])
         if data.GetParam(0) == '!debug':  # check for debug command, todo: remove this for production builds
             self._process_debug_command(Command(data, True))
             return
 
         if data.GetParam(0)[0] == '!':
             if self._config['core.prefix.enable', bool]:
-                if data.GetParam(0).replace('!', '').lower() != self._config['core.prefix.text']:
+                if data.GetParam(0).replace('!', '').lower() != self._config['core.prefix.text'].lower():
                     log('debug', 'Ignoring command %s, no prefix' % data.Message)
                     return
                 command = Command(data, True)
@@ -191,7 +191,7 @@ class Bot(object):
                 # command processed
                 return True
             elif kw == self._config['d20.keyword']:
-                if 2 != len(command):
+                if 1 != len(command):
                     # malformed command
                     self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
                 elif self._check_access(command, 'd20'):
@@ -440,7 +440,7 @@ class Bot(object):
     def _guess(self, command, guess, amount):
         # type: (Command, int, int) -> None
         log_call('Bot._guess', command=command, guess=guess, amount=amount)
-        roll = self._parent.GetRandom(0, self._config['guess.max_val', int] + 1)
+        roll = self._parent.GetRandom(1, self._config['guess.max_val', int] + 1)
         if roll == guess:
             amount *= self._config['guess.win_multiplier', int]
             log('debug', '%s won %d coins with roll %d (guess was %d)' % (command.user_name, amount, roll, guess))
@@ -465,6 +465,8 @@ class Bot(object):
         texts = self._config['d20.text.results'].split(';')
         if not texts[-1]:
             texts = texts[:-1]
+
+        log('debug', str(texts))
         res = texts[self._parent.GetRandom(0, len(texts))]
         self._respond(command, self._formatter.format_message(res, user=command.user_name, random_user=self._parent.GetRandomActiveUser()))
         self._parent.AddUserCooldown(info.script_name, 'd20', command.user_id, self._config['d20.cooldown'])
