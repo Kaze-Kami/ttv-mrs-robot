@@ -32,9 +32,6 @@ class Bot(object):
 
     def process(self, data):
         log_call('Bot.process', message=data.Message, params=[data.GetParam(i) for i in range(data.GetParamCount())])
-        if data.GetParam(0) == '!debug':  # check for debug command, todo: remove this for production builds
-            self._process_debug_command(Command(data, True))
-            return
 
         if data.GetParam(0)[0] == '!':
             if self._config['core.prefix.enable', bool]:
@@ -204,7 +201,7 @@ class Bot(object):
 
     def _process_debug_command(self, command):
         # type: (Command) -> None
-        # todo: add checkbox for release to disable these
+
         log_call('Bot._process_debug_command', command=command)
         """
          commands are:
@@ -466,7 +463,6 @@ class Bot(object):
         if not texts[-1]:
             texts = texts[:-1]
 
-        log('debug', str(texts))
         res = texts[self._parent.GetRandom(0, len(texts))]
         self._respond(command, self._formatter.format_message(res, user=command.user_name, random_user=self._parent.GetRandomActiveUser()))
         self._parent.AddUserCooldown(info.script_name, 'd20', command.user_id, self._config['d20.cooldown'])
