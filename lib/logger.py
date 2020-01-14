@@ -1,7 +1,7 @@
 """
 Created by Joscha Vack on 1/7/2020.
 """
-
+import codecs
 import os
 from os import path
 from datetime import date
@@ -27,8 +27,12 @@ def make_log_file():
     if not path.exists(global_variables.log_dir):
         os.mkdir(global_variables.log_dir)
 
-    # set log file
-    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '.log')
+    # find new log file name
+    i = 0
+    while path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '%d.log' % i)):
+        i += 1
+
+    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '%d.log' % i)
     log('info', 'Log file: ' + str(global_variables.log_file))
 
 
@@ -45,7 +49,8 @@ def log(level, msg, kind=None):
     msg = '[%s]: %s' % (kind.upper(), msg)
     if log_level <= log_levels[level]:
         global_variables.parent.Log(info.script_name, msg)
+
     # log to file
-    with open(global_variables.log_file, 'a') as f:
+    with codecs.open(global_variables.log_file, encoding='utf-8-sig', mode='a') as f:
         f.write(msg)
         f.write('\n')
