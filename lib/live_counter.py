@@ -16,7 +16,7 @@ class LiveCounter(object):
         self._live_time = 0
 
     def update(self):
-        live = True  # self._parent.IsLive() todo: release builds need to check this
+        live = self._parent.IsLive()
         if live:
             if not self._isLive:
                 self._isLive = True
