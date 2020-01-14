@@ -416,7 +416,7 @@ class Bot(object):
                 amount *= self._config['gamble.win_multiplier', int] * 2
                 add = True
             elif roll <= self._config['gamble.chance', int]:
-                amount *= self._config['gamble.win_multiplier', int] * 2
+                amount *= self._config['gamble.win_multiplier', int]
                 add = True
 
             if add:
