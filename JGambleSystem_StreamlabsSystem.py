@@ -59,6 +59,7 @@ def Execute(data):
             bot.process(data)
     except:
         log('error', traceback.format_exc())
+    return
 
 
 def Tick():
@@ -76,6 +77,7 @@ def Parse(parse_string, user_id, username, target_id, target_name, message):
                  target_name=target_name, message=message)
     except:
         log('error', traceback.format_exc())
+    return parse_string
 
 
 def ReloadSettings(jsondata):
