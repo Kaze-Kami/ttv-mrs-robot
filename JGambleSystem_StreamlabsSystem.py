@@ -41,9 +41,6 @@ def Init():
         # set up log file
         make_log_file()
         log_call('JBetSystem:Init')
-        # for debugging purposes: log available methods from Parent object
-        # for method_name in dir(Parent):
-        #     log('trace', 'Method Parent.%s' % method_name)
 
         global bot
         #   Load settings
