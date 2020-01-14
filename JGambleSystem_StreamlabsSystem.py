@@ -41,9 +41,6 @@ def Init():
         # set up log file
         make_log_file()
         log_call('JBetSystem:Init')
-        # for debugging purposes: log available methods from Parent object
-        # for method_name in dir(Parent):
-        #     log('trace', 'Method Parent.%s' % method_name)
 
         global bot
         #   Load settings
@@ -62,6 +59,7 @@ def Execute(data):
             bot.process(data)
     except:
         log('error', traceback.format_exc())
+    return
 
 
 def Tick():
@@ -79,6 +77,7 @@ def Parse(parse_string, user_id, username, target_id, target_name, message):
                  target_name=target_name, message=message)
     except:
         log('error', traceback.format_exc())
+    return parse_string
 
 
 def ReloadSettings(jsondata):
