@@ -32,10 +32,6 @@ class Bot(object):
 
     def process(self, data):
         log_call('Bot.process', message=data.Message, params=[data.GetParam(i) for i in range(data.GetParamCount())])
-        if data.GetParam(0) == '!debug':  # check for debug command, todo: remove this for production builds
-            self._process_debug_command(Command(data, True))
-            return
-
         if data.GetParam(0)[0] == '!':
             if self._config['core.prefix.enable', bool]:
                 if data.GetParam(0).replace('!', '').lower() != self._config['core.prefix.text'].lower():
