@@ -48,7 +48,7 @@ def make_log_file():
     global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-0.log')
     with open(global_variables.log_file, 'a'):
         pass
-    next_log_file()
+    log('info', 'Created new log file: %s' % str(global_variables.log_file))
 
 
 def log_call(fun, level_trace=True, **kwargs):
