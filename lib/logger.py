@@ -29,10 +29,10 @@ def make_log_file():
 
     # find new log file name
     i = 0
-    while path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '%d.log' % i)):
+    while path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)):
         i += 1
 
-    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '%d.log' % i)
+    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)
     log('info', 'Log file: ' + str(global_variables.log_file))
 
 
