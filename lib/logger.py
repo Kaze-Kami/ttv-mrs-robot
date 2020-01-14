@@ -48,6 +48,8 @@ def make_log_file():
     global last_log_file
     last_log_file = 0
     global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-0.log')
+    with open(global_variables.log_file, 'a'):
+        pass
     next_log_file()
 
 
