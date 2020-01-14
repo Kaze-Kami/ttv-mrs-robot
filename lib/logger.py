@@ -18,6 +18,8 @@ log_levels = {
     'none': 5
 }
 
+last_log_file = 0
+
 log_level = log_levels['info']
 
 
@@ -25,12 +27,12 @@ log_level = log_levels['info']
 
 def next_log_file():
     if 100000 < os.path.getsize(global_variables.log_file):
-        i = 0
-        while os.path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)):
-            i += 1
+        global last_log_file
+        while os.path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)):
+            last_log_file += 1
 
         # set new log file
-        global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)
+        global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)
         log('info', 'Created new log file: %s' % str(global_variables.log_file))
 
 
@@ -42,8 +44,10 @@ def make_log_file():
     for f in os.listdir(global_variables.log_dir):
         os.remove(os.path.join(global_variables.log_dir, f))
 
-    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-0.log')
-    log('info', 'Log file: ' + str(global_variables.log_file))
+    # reset last log file
+    global last_log_file
+    last_log_file = 0
+    next_log_file()
 
 
 def log_call(fun, level_trace=True, **kwargs):
