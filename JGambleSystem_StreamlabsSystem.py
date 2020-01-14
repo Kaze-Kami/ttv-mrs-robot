@@ -68,7 +68,9 @@ def Tick():
         global bot
         bot.tick()
     except:
-        log('error', traceback.format_exc())
+        global bot
+        if bot:
+            log('error', traceback.format_exc())
 
 
 def Parse(parse_string, user_id, username, target_id, target_name, message):

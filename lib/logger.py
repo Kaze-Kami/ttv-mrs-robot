@@ -18,22 +18,39 @@ log_levels = {
     'none': 5
 }
 
+last_log_file = 0
+
 log_level = log_levels['info']
 
 
 # todo: prevent large log files as those slow down the bot immensely
+
+def next_log_file():
+    if 100000 < os.path.getsize(global_variables.log_file):
+        global last_log_file
+        while os.path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)):
+            last_log_file += 1
+
+        # set new log file
+        global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)
+        log('info', 'Created new log file: %s' % str(global_variables.log_file))
+
+
 def make_log_file():
     # check log dir
     if not path.exists(global_variables.log_dir):
         os.mkdir(global_variables.log_dir)
 
-    # find new log file name
-    i = 0
-    while path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)):
-        i += 1
+    for f in os.listdir(global_variables.log_dir):
+        os.remove(os.path.join(global_variables.log_dir, f))
 
-    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % i)
-    log('info', 'Log file: ' + str(global_variables.log_file))
+    # reset last log file
+    global last_log_file
+    last_log_file = 0
+    global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-0.log')
+    with open(global_variables.log_file, 'a'):
+        pass
+    next_log_file()
 
 
 def log_call(fun, level_trace=True, **kwargs):
@@ -51,6 +68,7 @@ def log(level, msg, kind=None):
         global_variables.parent.Log(info.script_name, msg)
 
     # log to file
+    next_log_file()
     with codecs.open(global_variables.log_file, encoding='utf-8-sig', mode='a') as f:
         f.write(msg)
         f.write('\n')
