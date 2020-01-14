@@ -55,7 +55,7 @@ def _default_config_data():
         'disclaimer.text.disable': 'The disclaimer is currently disabled, {user}.',
         'disclaimer.text.disclaimer': 'Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.',
         'disclaimer.text.acknowledged': 'You can {gamble.keyword} and {guess.keyword} now {user}.',
-        'disclaimer.text.not_acknowledged': 'I\'m sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {core.disclaimer.command} to display it.',
+        'disclaimer.text.not_acknowledged': 'I\'m sorry {user} but you need to accept the disclaimer first to {gamble.keyword} or {guess.keyword}. Type {disclaimer.command} to display it.',
 
         # jackpot settings
         'jackpot.enable': True,

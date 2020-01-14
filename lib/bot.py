@@ -204,6 +204,7 @@ class Bot(object):
 
     def _process_debug_command(self, command):
         # type: (Command) -> None
+        # todo: add checkbox for release to disable these
         log_call('Bot._process_debug_command', command=command)
         """
          commands are:
@@ -236,15 +237,15 @@ class Bot(object):
                     log('warn', "Invalid debug command: '%s' (not enough params)" % command)
                     return
                 else:
-                    if 3 < len(command):
+                    if 4 < len(command) or len(command) < 3:
                         log('warn', "Invalid debug command: '%s' (too many params)" % command)
                         return
-                    if 3 == len(command):
-                        user_name = command[1].replace('@', '')
+                    if 4 == len(command):
+                        user_name = command[2].replace('@', '')
                         user_id = self._get_user_id(user_name)
-                        amount = command[2]
+                        amount = command[3]
                     else:
-                        amount = command[1]
+                        amount = command[2]
                     if amount == self._config['core.all_keyword']:
                         amount = self._parent.GetPoints(user_id)
                     else:
