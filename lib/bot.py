@@ -204,7 +204,6 @@ class Bot(object):
 
     def _process_debug_command(self, command):
         # type: (Command) -> None
-        # todo: add checkbox for release to disable these
         log_call('Bot._process_debug_command', command=command)
         """
          commands are:
