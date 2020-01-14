@@ -23,8 +23,6 @@ last_log_file = 0
 log_level = log_levels['info']
 
 
-# todo: prevent large log files as those slow down the bot immensely
-
 def next_log_file():
     if 100000 < os.path.getsize(global_variables.log_file):
         global last_log_file
