@@ -24,13 +24,15 @@ log_level = log_levels['info']
 
 
 def next_log_file():
-    if 100000 < os.path.getsize(global_variables.log_file):
+    if 102400 < os.path.getsize(global_variables.log_file):
         global last_log_file
         while os.path.exists(path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)):
             last_log_file += 1
 
         # set new log file
         global_variables.log_file = path.join(global_variables.log_dir, date.today().isoformat() + '-%d.log' % last_log_file)
+        with open(global_variables.log_file, 'a'):
+            pass
         log('info', 'Created new log file: %s' % str(global_variables.log_file))
 
 
