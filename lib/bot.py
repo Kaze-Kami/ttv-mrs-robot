@@ -157,9 +157,6 @@ class Bot(object):
                     amount = self._parse_and_check_amount(command, 1)
                     if amount:
                         self._gamble(command, amount)
-                    else:
-                        # malformed command
-                        self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
                 # command processed
                 return True
             elif kw == self._config['guess.keyword']:
@@ -173,17 +170,13 @@ class Bot(object):
                         # get guess
                         try:
                             guess = command[1, int]
-                            if guess < 0 or self._config['guess.max_val', int] < guess:
-                                # guess not in range
-                                self._respond(command, self._formatter.format('guess.text.not_in_range', user=command.user_name, guess=guess))
-                            else:
+                            if 0 < guess <= self._config['guess.max_val', int]:
                                 self._guess(command, guess, amount)
+                            else:  # guess not in range
+                                self._respond(command, self._formatter.format('guess.text.not_in_range', user=command.user_name, guess=guess))
                         except:
                             # malformed command
                             self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
-                    else:
-                        # malformed command
-                        self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
                 # command processed
                 return True
             elif kw == self._config['d20.keyword']:
@@ -277,10 +270,17 @@ class Bot(object):
         # type: (Command, int) -> int or None
         log_call('Bot._parse_and_check_amount', command=command, index=index)
         try:
-            return command[index, int]
+            amount = command[index, int]
+            # check if user has enough currency to do this
+            if amount <= self._parent.GetPoints(command.user_id):  # user has enough currency
+                return amount
+            else:  # user does not have enough currency
+                self._respond(command, self._formatter.format('core.text.not_enough_currency', currency=self._parent.GetCurrencyName(), user=command.user_name))
+                return None
         except:  # parse failed either due to index or its not a number
             if command[index] == self._config['core.all_keyword']:
                 return self._parent.GetPoints(command.user_id)
+            self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
             return None
 
     def _get_jackpot(self):
@@ -328,7 +328,7 @@ class Bot(object):
         log_call('Bot._gamble', command=command, amount=amount)
         roll = self._parent.GetRandom(0, 100)
         add = False
-        if roll + 1 == self._config['jackpot.number', int] and self._config['jackpot.enable', bool]:
+        if self._config['jackpot.enable', bool] and 100 - roll == self._config['jackpot.number', int]:
             # jackpot
             jackpot = self._get_jackpot()
             self._clear_jackpot()

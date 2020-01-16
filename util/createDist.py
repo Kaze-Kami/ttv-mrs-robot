@@ -22,21 +22,6 @@ def file_paths(root, base=''):
     return paths
 
 
-def remove_files(root, *exclude):
-    # for what ever reason we have to delete folders recursively - i guess ;_;
-    if not path.exists(dist_path):
-        return
-
-    files = list(listdir(root))
-    for e in files:
-        if e not in exclude:
-            p = path.join(root, e)
-            if path.isdir(p):
-                remove_files(p, *exclude)
-            else:
-                remove(p)
-
-
 if __name__ == '__main__':
     # dirs to copy
     base_path = path.join(r'D:\Dev\Python\MrsRobot')
@@ -52,7 +37,6 @@ if __name__ == '__main__':
     scripts_path = path.join(r'C:\Users\Kanjiu Akuma\AppData\Roaming\Streamlabs\Streamlabs Chatbot\Services\Scripts\MrsRobot')
     if not path.exists(scripts_path):
         mkdir(scripts_path)
-    remove_files(scripts_path, 'log.log')
 
     print('Creating distribution at "%s"' % dist_path)
     # remove old zip if exists
