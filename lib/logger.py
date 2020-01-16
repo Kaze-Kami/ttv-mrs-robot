@@ -1,5 +1,6 @@
 """
 Created by Joscha Vack on 1/7/2020.
+todo: Wrap logger in custom class, and improve file rotation
 """
 import codecs
 import os
