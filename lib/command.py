@@ -36,20 +36,12 @@ class Command(object):
         except:
             i = args
             f = str
-        try:
-            return f(self._params[i])
-        except IndexError:
-            # raise this
-            ttype, value, traceback = sys.exc_info()
-            raise ttype, value, traceback
-        except Exception:
-            # parsing failed -> return None
-            return None
+        return f(self._params[i])
 
     def __str__(self):
         log_call('Command.__str__.getter')
         return "Command '%s' by '%s' (id=%s) from %s %s: %d params %s" % (
-        self.message, self.user_name, self.user_id, self.origin, self.kind, len(self), '[' + ', '.join(self.params) + ']')
+            self.message, self.user_name, self.user_id, self.origin, self.kind, len(self), '[' + ', '.join(self.params) + ']')
 
     @property
     def is_whisper(self):
