@@ -343,14 +343,15 @@ class Bot(object):
         try:
             amount = command[index, int]
             # check if user has enough currency to do this
-            if amount <= self._parent.GetPoints(command.user_id):  # user has enough currency
+            if 0 < amount <= self._parent.GetPoints(command.user_id):  # user has enough currency
                 return amount
             else:  # user does not have enough currency
                 self._respond(command, self._formatter.format('core.text.not_enough_currency', currency=self._parent.GetCurrencyName(), user=command.user_name))
                 return None
         except:  # parse failed either due to index or its not a number
             if command[index] == self._config['core.all_keyword']:
-                return self._parent.GetPoints(command.user_id)
+                amount = self._parent.GetPoints(command.user_id)
+                return None if amount == 0 else amount
             self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
             return None
 
