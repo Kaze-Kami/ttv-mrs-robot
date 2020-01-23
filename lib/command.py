@@ -5,6 +5,7 @@ import sys
 
 from lib.logger import log_call
 
+
 # noinspection PyBroadException
 class Command(object):
     def __init__(self, data, remove_prefix):
