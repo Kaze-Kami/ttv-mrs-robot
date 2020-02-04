@@ -381,8 +381,8 @@ class Bot(object):
 
     def _update_jackpot(self, subtract=False):
         # type: (bool) -> None
+        log_call('Bot._update_jackpot', subtract=subtract)
         if self._config['jackpot.decay.enable', bool]:
-            log_call('Bot._update_jackpot', subtract=subtract)
             live_time = self._live_counter.seconds_live
             amount = 0.
             for i, v, t in reversed([(i, e[0], e[1]) for i, e in enumerate(self._config['jackpot.entries'])]):
