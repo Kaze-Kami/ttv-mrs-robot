@@ -381,20 +381,21 @@ class Bot(object):
 
     def _update_jackpot(self, subtract=False):
         # type: (bool) -> None
-        log_call('Bot._update_jackpot', subtract=subtract)
-        live_time = self._live_counter.seconds_live
-        amount = 0.
-        for i, v, t in reversed([(i, e[0], e[1]) for i, e in enumerate(self._config['jackpot.entries'])]):
-            if t - live_time <= 0:
-                log('debug', 'Removing entry %d from the jackpot (value=%d, time=%d)' % (i, v, t))
-                del self._config['jackpot.entries'][i]
-            else:
-                log('debug', 'Jackpot entry %d: value=%d, time remaining=%d' % (i, v, t - live_time))
-                if subtract:
-                    self._config['jackpot.entries'][i][1] -= live_time
-                amount += v
-        self._config['jackpot.sum'] = int(amount)
-        save_jackpot(self._config)
+        if self._config['jackpot.decay.enable', bool]:
+            log_call('Bot._update_jackpot', subtract=subtract)
+            live_time = self._live_counter.seconds_live
+            amount = 0.
+            for i, v, t in reversed([(i, e[0], e[1]) for i, e in enumerate(self._config['jackpot.entries'])]):
+                if t - live_time <= 0:
+                    log('debug', 'Removing entry %d from the jackpot (value=%d, time=%d)' % (i, v, t))
+                    del self._config['jackpot.entries'][i]
+                else:
+                    log('debug', 'Jackpot entry %d: value=%d, time remaining=%d' % (i, v, t - live_time))
+                    if subtract:
+                        self._config['jackpot.entries'][i][1] -= live_time
+                    amount += v
+            self._config['jackpot.sum'] = int(amount)
+            save_jackpot(self._config)
 
     """ ----------------
     " Minigames
