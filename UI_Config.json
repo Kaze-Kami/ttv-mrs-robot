@@ -158,9 +158,9 @@
     },
     "disclaimer.text.disclaimer": {
         "type": "textbox",
-        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {core.acknowledge.command} to acknowledge this disclaimer.",
+        "value": "Gambling can be addictive. Play responsibly. Underage gambling is an offence. Type {disclaimer.acknowledge_command} to acknowledge this disclaimer.",
         "label": "Disclaimer",
-        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{core.acknowledge.command} (command to acknowledge the disclaimer)",
+        "tooltip": "Text shown when a user tries to gamble more than he owns.\n\rAvailable formats are:\n\r\t{disclaimer.acknowledge_command} (command to acknowledge the disclaimer)",
         "group": "Disclaimer"
     },
     "disclaimer.text.disable": {
