@@ -199,6 +199,13 @@
         "tooltip": "Keyword used to display the jackpot",
         "group": "Jackpot"
     },
+    "jackpot.min_entry": {
+        "type": "numberbox",
+        "value": 500,
+        "label": "Jackpot min entry",
+        "tooltip": "Minimum amount of currency a user has to gamble to eligible to win the Jackpot",
+        "group": "Jackpot"
+    },
     "jackpot.number": {
         "type": "numberbox",
         "value": 100,
@@ -324,9 +331,23 @@
     },
     "gamble.text.help": {
         "type": "textbox",
-        "value": "Type {gamble.command} [amount] to gamble. Chances to win are {gamble.chance}%",
+        "value": "Type {gamble.command} [amount] to gamble. You need to gamble at least {gamble.min_entry} {currency} and at least {jackpot.min_entry} {currency} to be eligible to win the jackpot. Chances to win are {gamble.chance}%",
         "label": "Gamble help text",
-        "tooltip": "Gamble help text.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{gamble.chance} (chance to win when gambling)",
+        "tooltip": "Gamble help text.\n\rAvailable formats are:\n\r\t{gamble.command} (gamble command),\n\r\t{gamble.chance} (chance to win when gambling),\n\n\t{gamble.min_entry} (minimum amount needed to gamble),\n\n\t{jackpot.min_entry} (minimum amount needed to eligible to win jackpot),\n\n\t{currency} (currency name)",
+        "group": "Gamble"
+    },
+    "gamble.text.entry_to_low": {
+        "type": "textbox",
+        "value": "You need to gamble at least {gamble.min_entry} {currency}, {user}",
+        "label": "Gamble entry to low text",
+        "tooltip": "Text sent if a users tries to gamble with less than the minimum gamble entry.\n\nAvailable formats are:\n\n\t{gamble.min_entry} (minimum amount needed to gamble),\n\n\t{user} (mentions the user),\n\n\t{currency} (currency name)",
+        "group": "Gamble"
+    },
+    "gamble.min_entry": {
+        "type": "numberbox",
+        "value": 100,
+        "label": "Gamble min entry",
+        "tooltip": "Minimum amount of currency a user has to gamble",
         "group": "Gamble"
     },
     "gamble.chance": {

@@ -85,7 +85,7 @@ class Bot(object):
                 elif kw == self._config['jackpot.keyword']:
                     key = 'jackpot.text.help'
             if key:
-                self._respond(command, self._formatter.format(key, user=command.user_name))
+                self._respond(command, self._formatter.format(key, user=command.user_name, currency=self._parent.GetCurrencyName()))
             else:
                 # malformed command
                 self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
@@ -276,7 +276,11 @@ class Bot(object):
                 self._respond(command, self._formatter.format('core.text.malformed_command', user=command.user_name))
                 return None
             elif amount <= self._parent.GetPoints(command.user_id):  # user has enough currency
-                return amount
+                if self._config['gamble.min_entry', int] <= amount:  # amount is enough to gamble
+                    return amount
+                else:
+                    self._respond(command, self._formatter.format('gamble.text.entry_to_low', currency=self._parent.GetCurrencyName(), user=command.user_name))
+                    return None
             else:  # user does not have enough currency
                 self._respond(command, self._formatter.format('core.text.not_enough_currency', currency=self._parent.GetCurrencyName(), user=command.user_name))
                 return None
@@ -336,7 +340,7 @@ class Bot(object):
         log_call('Bot._gamble', command=command, amount=amount)
         roll = self._parent.GetRandom(0, 100)
         add = False
-        if self._config['jackpot.enable', bool] and 100 - roll == self._config['jackpot.number', int]:
+        if self._config['jackpot.enable', bool] and self._config['jackpot.min_entry'] <= amount and 100 - roll == self._config['jackpot.number', int]:
             # jackpot
             jackpot = self._get_jackpot()
             self._clear_jackpot()

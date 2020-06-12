@@ -60,6 +60,7 @@ def _default_config_data():
         # jackpot settings
         'jackpot.enable': True,
         'jackpot.keyword': 'jackpot',
+        'jackpot.min_entry': 500,
         'jackpot.number': 100,
         'jackpot.percentage': 100,
         'jackpot.decay.enable': True,
@@ -68,7 +69,7 @@ def _default_config_data():
         'jackpot.decay.minutes': 0,
         'jackpot.text.content': 'The jackpot currently contains {jackpot.sum} {currency}, {user}',
         'jackpot.text.win': '{user} rolled {roll} and won the jackpot ({jackpot.sum} {currency})! He has {total} {currency} now.',
-        'jackpot.text.help': 'Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling.',
+        'jackpot.text.help': 'Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling with at least {jackpot.min_entry} {currency}.',
 
         # gamble settings
         'gamble.enable': True,
@@ -78,7 +79,9 @@ def _default_config_data():
         'gamble.cooldown': 10,
         'gamble.text.win': 'Roll was {roll}. {user} wins {payout} {currency} and has {total} {currency} now.',
         'gamble.text.lose': 'Roll was {roll}. {user} looses {loss} {currency} and has {total} {currency} now.',
-        'gamble.text.help': 'Type {gamble.command} [amount] to gamble. Chances to win are {gamble.chance}%',
+        'gamble.text.help': 'Type {gamble.command} [amount] to gamble. You need to gamble at least {gamble.min_entry} {currency} and at least {jackpot.min_entry} {currency} to be eligible to win the jackpot. Chances to win are {gamble.chance}%',
+        'gamble.text.entry_to_low': 'You need to gamble at least {gamble.min_entry} {currency}, {user}',
+        'gamble.min_entry': 200,
         'gamble.chance': 25,
         'gamble.win_multiplier': 2,
         'gamble.double.enable': True,

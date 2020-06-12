@@ -43,6 +43,7 @@ Available specifiers for texts:
     # jackpot settings
      {jackpot.enable}: Evaluates to True or False depending on whether or not the jackpot is enabled (Not intended for usage)
      {jackpot.keyword}: Evaluates to the jackpot keyword (eg. jackpot)
+     {jackpot.min_entry}: Evaluates to the minimum entry needed to be eligible to win the jackpot
      {jackpot.number}: Evaluates to the jackpot number (eg. 100)
      {jackpot.percentage}: Evaluates to the percentage of loss entered into jackpot without %-sign
      {jackpot.decay.enable}: Evaluates to True or False depending on whether or not jackpot decay is enabled (Not intended for usage)
@@ -62,6 +63,8 @@ Available specifiers for texts:
      {gamble.text.win}: Evaluates to the gamble win text set in the gamble tab
      {gamble.text.lose}: Evaluates to the gamble lose text set in the gamble tab
      {gamble.text.help}: Evaluates to the gamble help text set in the gamble tab
+     {gamble.text.entry_to_low}: Evaluates to the entry to low text set in the core tab
+     {gamble.min_entry}: Evaluates to the minimum entry needed to be able to gamble
      {gamble.chance}: Evaluates to the gamble chance in percent without %-sign
      {gamble.win_multiplier}: Evaluates to the gamble win multiplier set in the gamble tab
      {gamble.double.enable}: Evaluates to True or False depending on whether or not double chance is enabled (Not intended for usage)
