@@ -12,17 +12,17 @@ from lib.logger import log_call, log
 
 def write_json(path, data, js=False):
     log_call('file_io:_write_json')
-    with codecs.open(path, encoding="utf-8-sig", mode="w+") as f:
-        json.dump(data, f, encoding="utf-8", default='')
+    with codecs.open(path, encoding="utf8", mode="w+") as f:
+        json.dump(data, f, ensure_ascii=False)
     if js:
-        with codecs.open(path.replace("json", "js"), encoding="utf-8-sig", mode="w+") as f:
-            f.write("var settings = {0};".format(json.dumps(data, encoding='utf-8')))
+        with codecs.open(path.replace("json", "js"), encoding="utf8", mode="w+") as f:
+            f.write("var settings = {0};".format(json.dumps(data, ensure_ascii=False).encode('utf8')))
 
 
 def read_json(path):
     log_call('file_io:_read_json')
-    with codecs.open(path, encoding="utf-8-sig", mode="r") as f:
-        return json.load(f, encoding="utf-8")
+    with codecs.open(path, encoding="utf8", mode="r") as f:
+        return json.load(f, encoding="utf8")
 
 
 def exists_backup(path):
