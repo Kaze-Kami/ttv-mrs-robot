@@ -267,9 +267,9 @@
     },
     "jackpot.text.help": {
         "type": "textbox",
-        "value": "Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling.",
+        "value": "Type {jackpot.command} to view the jackpot. Jackpot can be won by rolling {jackpot.number} while gambling with at least {jackpot.min_entry} {currency}.",
         "label": "Jackpot help text",
-        "tooltip": "Jackpot help text.\n\nAvailable formats are:\n\n\t{jackpot.command} (jackpot command),\n\n\t{jackpot.number} (Number to win jackpot)",
+        "tooltip": "Jackpot help text.\n\nAvailable formats are:\n\n\t{jackpot.command} (jackpot command),\n\n\t{jackpot.number} (Number to win jackpot),\n\n\t{jackpot.min_entry} (min entry to be eligible to win jackpot),\n\n\t{currency} (name of currency)",
         "group": "Jackpot"
     },
 
