@@ -89,7 +89,10 @@ def ReloadSettings(jsondata):
         config = load_config(jsondata)
         logger.log_level = log_levels[config['core.log_level'].lower()]
         bot.config = config
-        save_config(config)
+        if save_config(config):
+            ret = ctypes.windll.user32.MessageBoxW(0, u"Config saved (hopefully).", u"Ok?", 0)
+        else:
+            ret = ctypes.windll.user32.MessageBoxW(0, u"Failed to save config.", u"fml", 0)
     except:
         log('error', traceback.format_exc())
 

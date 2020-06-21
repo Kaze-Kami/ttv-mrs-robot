@@ -220,8 +220,10 @@ def save_config(config):
     try:
         # save config
         write_json(global_variables.config_file, data, js=True)
+        return True
     except Exception as e:
         log('error', 'Failed to save config: %s' % repr(e))
+        return False
 
 
 def save_whitelist(config):
