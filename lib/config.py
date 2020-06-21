@@ -136,7 +136,7 @@ def load_config(jsondata=None, default=False):
     if os.path.exists(global_variables.jackpot_file):
         try:
             jackpot_info = read_json(global_variables.jackpot_file)
-            raw_data['jackpot.entries'] = [(float(v), int(t)) for v, t in zip(jackpot_info['jackpot.values'],
+            raw_data['jackpot.entries'] = [[float(v), int(t)] for v, t in zip(jackpot_info['jackpot.values'],
                                                                               jackpot_info['jackpot.times'])]
             total = 0
             for v, t in raw_data['jackpot.entries']:
